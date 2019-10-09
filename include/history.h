@@ -18,7 +18,7 @@
 # define SEARCH 4
 # define EXCLAMATION 5
 # define HISTORY_SEARCH 6
-# define PRINT_HISTORY 7
+# define HISTORY 7
 # define FC 8
 # include <sys/types.h>
 # include <sys/uio.h>

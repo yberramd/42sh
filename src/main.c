@@ -95,8 +95,11 @@ int		main(int argc, char **argv)
 		if (input[0] == '!')
 		{
 			if(history(EXCLAMATION, input, &test))
+			{
+				printf("JE RENTRE\n");
 				printf("%s\n", test);
-			//history(PRINT_HISTORY, NULL, NULL);
+			}
+			//history(HISTORY, NULL, NULL);
 		}
 		else
 			history(ADD_CMD, input, NULL);

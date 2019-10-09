@@ -92,7 +92,7 @@ static int	add_cmd(char *line, t_history *history, char *home)
 	int	fd;
 
 	fd = open(home, O_WRONLY | O_APPEND);
-	if (fd != -1)
+	if (fd != -1 && line != NULL)
 	{
 		while (history->next)
 			history = history->next;
@@ -259,18 +259,23 @@ static int		exclamation_point(char *line, t_history *history, char **cmd, char *
 {
 	int ret;
 
-
+	ret = 0;
 	if (ft_isdigit(line[1]))
 		ret = exclamation_point_number(line, history, cmd);
-	if (line[1] == '-' && ft_isdigit(line[2]))
+	else if (line[1] == '-' && ft_isdigit(line[2]))
 		ret = exclamation_point_minus_number(line, history, cmd);
-	if (line[1] == '!')
+	else if (line[1] == '!')
 		ret = exclamation_point_exclamation_point(history, cmd);
-	if (line[1] != '\0')
-		ret = search_history(history, &line[1], cmd);
-	if (ret)
+	else if (line[1] != '\0')
+		ret = search_history(history, &line[1], cmd);//erreur cmd pas initialise
+	else if (line[1] == '\0')
+	{
+		*cmd = "!";
+		ret = 1;
+	}
+	if (ret > 0)
 		add_cmd(*cmd, history, home);//A VOIR C'eST MOCHE
-	return (ret);
+	return ((line[1] == '\0') ? 0 : ret);
 }
 
 int 	print_history(t_history *history)
@@ -298,7 +303,7 @@ int		history(int flag, char *line, char **cmd)//LIMIT HISTORY POUR LE RENDRE POS
 
 	/*if (flag == FC)
 		return (fc(&history));*/
-	if (flag == PRINT_HISTORY)
+	if (flag == HISTORY)
 		return (print_history(&history));	
 	if (flag == EXCLAMATION && line[0] == '!')
 		return (exclamation_point(line, &history, cmd, home));//ajout de ADD_CMD
