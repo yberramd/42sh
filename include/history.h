@@ -6,7 +6,7 @@
 /*   By: yberramd <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/15 18:26:13 by yberramd          #+#    #+#             */
-/*   Updated: 2019/09/11 14:46:20 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/10/02 14:28:44 by yberramd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # define DELETE 2
 # define ADD_CMD 3
 # define SEARCH 4
-# define HISTORY_SEARCH 5
+# define EXCLAMATION 5
+# define HISTORY_SEARCH 6
+# define PRINT_HISTORY 7
+# define FC 8
 # include <sys/types.h>
 # include <sys/uio.h>
 # include <fcntl.h>

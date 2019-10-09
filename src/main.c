@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:32:13 by abarthel          #+#    #+#             */
-/*   Updated: 2019/09/30 13:26:55 by bprunevi         ###   ########.fr       */
+/*   Updated: 2019/10/02 23:40:38 by yberramd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int		main(int argc, char **argv)
 /*	extern int	g_fd_prompt;
 */	char		*input;
 	char		**args;
+	char		*test;//a ENLEVER
 	int		status;
 	
 	(void)argc;
@@ -91,7 +92,14 @@ int		main(int argc, char **argv)
 	set_signals(0);
 	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		history(ADD_CMD, input, NULL);
+		if (input[0] == '!')
+		{
+			if(history(EXCLAMATION, input, &test))
+				printf("%s\n", test);
+			//history(PRINT_HISTORY, NULL, NULL);
+		}
+		else
+			history(ADD_CMD, input, NULL);
 		args = lexer(&input);
 		ft_memdel((void**)&input);
 		if (!args)
