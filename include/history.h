@@ -12,14 +12,19 @@
 
 #ifndef HISTORY_H
 # define HISTORY_H
-# define INIT 1
-# define DELETE 2
-# define ADD_CMD 3
-# define SEARCH 4
-# define EXCLAMATION 5
-# define HISTORY_SEARCH 6
-# define HISTORY 7
-# define FC 8
+enum {
+	INIT,
+	DELETE,
+	ADD_CMD,
+	SEARCH,
+	EXCLAMATION,
+	HISTORY_SEARCH,
+	FORWARD,
+	BACKWARD,
+	GET,
+	FIRST,
+	LAST,
+};
 # include <sys/types.h>
 # include <sys/uio.h>
 # include <fcntl.h>
@@ -43,5 +48,5 @@ typedef struct	s_history
 	struct s_history *previous;
 }				t_history;
 
-int		history(int flag, char *line, char **cmd);
+int		history(int flag, const char *line, char **cmd);
 #endif

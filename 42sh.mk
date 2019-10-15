@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2019/09/30 18:15:05 by tgouedar         ###   ########.fr        #
+#    Updated: 2019/10/15 13:56:47 by yberramd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,7 @@ SOURCES :=	main.c \
 			job/builtins/builtin_setenv.c \
 			job/builtins/builtin_unsetenv.c \
 			job/builtins/builtin_truefalse.c \
+			job/builtins/builtin_history.c \
 			job/builtins/builtins_dispatcher.c \
 			job/builtins/ft_putenv_table.c \
 			hash_module/corps_fini_tools.c \

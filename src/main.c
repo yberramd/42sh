@@ -68,7 +68,6 @@ int		main(int argc, char **argv)
 /*	extern int	g_fd_prompt;
 */	char		*input;
 	char		**args;
-	char		*test;//a ENLEVER
 	int		status;
 	
 	(void)argc;
@@ -92,17 +91,7 @@ int		main(int argc, char **argv)
 	set_signals(0);
 	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		if (input[0] == '!')
-		{
-			if(history(EXCLAMATION, input, &test))
-			{
-				printf("JE RENTRE\n");
-				printf("%s\n", test);
-			}
-			//history(HISTORY, NULL, NULL);
-		}
-		else
-			history(ADD_CMD, input, NULL);
+		history(ADD_CMD, input, NULL);
 		args = lexer(&input);
 		ft_memdel((void**)&input);
 		if (!args)
