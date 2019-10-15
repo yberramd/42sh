@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:32:13 by abarthel          #+#    #+#             */
-/*   Updated: 2019/10/02 23:40:38 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/10/15 15:51:43 by yberramd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ int		main(int argc, char **argv)
 	(void)argc;
 	status = 0;
 	g_progname = argv[0];
-	init_termcaps();
 	if (history(INIT, NULL, NULL) == -1)
 		return (1);
 	if (!(environ = ft_tabcpy(environ)))

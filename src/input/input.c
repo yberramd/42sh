@@ -6,7 +6,7 @@
 /*   By: bprunevi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/17 14:56:11 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/10/01 12:11:52 by bprunevi         ###   ########.fr       */
+/*   Updated: 2019/10/12 06:08:14 by bprunevi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,62 +14,40 @@
 #include "keys.h"
 #include "prompt.h"
 #include "libft.h"
+#include "display.h"
 
 #include <unistd.h>
 #include <term.h>
 #include <curses.h>
 #include <signal.h>
 
-int init_termcaps()
+int toggle_termcaps()
 {
 	struct termios term;
 
 	tcgetattr(0, &term);
-	term.c_lflag = 0;
+#if 0
+	if (term.c_lflag & ECHOE)
+		ft_printf("%d : %s\n", ECHOE, "ECHOE");
+	if (term.c_lflag & ECHO)
+		ft_printf("%d : %s\n", ECHO, "ECHO");
+	if (term.c_lflag & ECHONL)
+		ft_printf("%d : %s\n", ECHONL, "ECHONL");
+	if (term.c_lflag & ISIG)
+		ft_printf("%d : %s\n", ISIG, "ISIG");
+	if (term.c_lflag & ICANON)
+		ft_printf("%d : %s\n", ICANON, "ICANON");
+	if (term.c_lflag & IEXTEN)
+		ft_printf("%d : %s\n", IEXTEN, "IEXTEN");
+	if (term.c_lflag & TOSTOP)
+		ft_printf("%d : %s\n", TOSTOP, "TOSTOP");
+	if (term.c_lflag & NOFLSH)
+		ft_printf("%d : %s\n", NOFLSH, "NOFLSH");
+#endif
+	term.c_lflag ^= ECHO;
+	term.c_lflag ^= ICANON;
 	tcsetattr(0, 0, &term);
 	tgetent(NULL, getenv("TERM"));
-	return(0);
-}
-
-void display_init(int sig)
-{
-	char buff[16];
-	int j;
-
-	j = 0;
-	ft_bzero(buff, 16);
-#if 0
-	if (sig == SIGWINCH)
-		ft_printf("%s", tgoto(tgetstr("cm", NULL), 0, g_pi.line)); 
-#else
-	(void) sig;
-#endif
-	write(1, "\x1B[6n", 4);
-	read(1, &buff, 15);
-	while (!ft_isdigit(buff[j]))
-		j++;
-	g_pi.line = ft_atoi(&buff[j]);
-	(g_pi.line)--;
-	g_pi.t_col = tgetnum("co");
-	g_pi.t_li = tgetnum("li");
-}
-
-int display(char *str, int j, int i, char *prompt, int prompt_len)
-{
-	while (g_pi.t_li == g_pi.line + (i + prompt_len) / g_pi.t_col && g_pi.line--)
-		ft_printf("\n");
-	ft_printf("%s", tgoto(tgetstr("cm", NULL), 0, g_pi.line)); 
-	ft_printf("%s", tgetstr("cd", NULL));
-	ft_printf("%s", prompt);
-	ft_printf("%s", str ? str : "");
-	ft_printf("%s", tgoto(tgetstr("cm", NULL), (j + prompt_len) % g_pi.t_col,  g_pi.line + (j + prompt_len) / g_pi.t_col));
-	return(0);
-}
-
-int display_lenght(char *str)
-{
-	if (str)
-		return(ft_strlen(getcwd(NULL, 0)) + 4);
 	return(0);
 }
 
@@ -82,7 +60,6 @@ int get_stdin(char *prompt, int prompt_len, char **buff)
 	i = 0;
 	j = 0;
 	*buff = ft_strdup("");
-	display_init(0);
 	display(*buff, j, i, prompt, prompt_len);
 	while (1)
 	{
@@ -91,6 +68,8 @@ int get_stdin(char *prompt, int prompt_len, char **buff)
 			normal_char(buff, &j, &i, c);
 		else if (c == '\177')
 			backspace_key(buff, &j, &i);
+		else if (c == '\t')
+			tab_key(buff, &j, &i);
 		else if (c == '\033')
 			escape_char(buff, &j, &i);
 		else if (c == '\n' && !display(*buff, i, i, prompt, prompt_len))
@@ -108,6 +87,7 @@ int read_command(char **buff)
 
 	if (!isatty(0))
 		return(1);
+	toggle_termcaps();
 	prompt_len = mkprompt(&prompt);
 	get_stdin(prompt, prompt_len, buff);
 	write(1, "\n", 1);
@@ -117,5 +97,6 @@ int read_command(char **buff)
 		*buff = ft_strjoinfree(*buff, tmp);
 		write(1, "\n", 1);
 	}
+	toggle_termcaps();
 	return(0);
 }
