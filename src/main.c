@@ -74,7 +74,7 @@ int		main(int argc, char **argv)
 	status = 0;
 	copybuff = NULL;
 	g_progname = argv[0];
-	if (history(INIT, NULL, NULL) == -1)
+	if (!(history(INIT, NULL, NULL)))
 		return (1);
 	if (!(environ = ft_tabcpy(environ)))
 	{
@@ -91,7 +91,10 @@ int		main(int argc, char **argv)
 	set_signals(0);
 	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		history(ADD_CMD, input, NULL);
+		if (!(history(ADD_CMD, input, NULL)))
+		{	
+			return (1);
+		}
 		args = lexer(&input);
 		ft_memdel((void**)&input);
 		if (!args)
