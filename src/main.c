@@ -91,8 +91,9 @@ int		main(int argc, char **argv)
 	set_signals(0);
 	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		if (!(history(ADD_CMD, input, NULL)))
+		if (!(history(ADD_CMD, &input, NULL)))
 		{	
+			psherror(e_cannot_allocate_memory, argv[0], e_cmd_type);
 			return (1);
 		}
 		args = lexer(&input);

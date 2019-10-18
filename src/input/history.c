@@ -167,20 +167,20 @@ static int	ft_search(t_history *history, const char *line, char **cmd)
 	return (0);
 }
 
-static int	search_history(t_history *history, const char *line, char **cmd)
+static int	search_history(t_history *history, char *line, char **cmd, int ret)
 {
 	while (history->next)
 		history = history->next;
 	while (history->previous)
 	{
-		if (history->str != NULL && line != NULL && ft_strcmp(history->str, line) > 0)
+		if (history->str != NULL && line != NULL && ft_strfchr(history->str, line) != 0)
 		{
 			*cmd = history->str;
 			return (1);
 		}
 		history = history->previous;
 	}
-	return (0);
+	return (ret);
 }
 
 static int error_clean(int fd, char *get_line)
@@ -310,22 +310,46 @@ static int		exclamation_point_exclamation_point(t_history *history, char **cmd)
 
 static int 		exclamation_point(char *line, t_history *history, char **cmd)
 {
-	char	*tmp;
+	int 	i;
 	int 	ret;
 
 	ret = 1;
 	if (ft_isdigit(line[1]))
-		ret = exclamation_point_number(line, history, cmd);
+	{
+		i = 1;
+		if ((ret = exclamation_point_number(line, history, cmd)) != -1)
+		{
+			while(ft_isdigit(line[i]))
+				i++;
+			if (!(*cmd = ft_strjoin(*cmd, &line[i])))
+				return (0);
+		}
+	}
 	else if (line[1] == '-' && ft_isdigit(line[2]))
-		ret = exclamation_point_minus_number(line, history, cmd);
+	{
+		i = 2;
+		if ((ret = exclamation_point_minus_number(line, history, cmd)) != -1)
+		{
+			while (ft_isdigit(line[i]))
+				i++;
+			if (!(*cmd = ft_strjoin(*cmd, &line[i])))
+				return (0);
+		}
+	}
 	else if (line[1] == '!')
-		ret = exclamation_point_exclamation_point(history, cmd);
+	{
+		if ((ret = exclamation_point_exclamation_point(history, cmd)) != -1)
+			if (!(*cmd = ft_strjoin(*cmd, &line[2])))
+				return (0);
+	}
 	else if (line[1] != '\0')
-		ret = search_history(history, &line[1], cmd);
+	{
+		ret = search_history(history, &line[1], cmd, -1);
+	}
 	return (ret);
 }
 
-static int		history_cmd(char *line, t_history *history)
+static int		history_cmd(char **line, t_history *history)
 {
 	int 	ret;
 	int 	i;
@@ -333,27 +357,35 @@ static int		history_cmd(char *line, t_history *history)
 
 	ret = 1;
 	i = 0;
-	cmd = NULL;
-	while (line[i] != '\0')
+	cmd = NULL; 
+	while ((*line)[i] != '\0')
 	{
-		if (line[i] == '!')
+		if ((*line)[i] == '!')
 		{
-			if ((ret = exclamation_point(&line[i], history, &cmd)) != -1)
+			if ((ret = exclamation_point(&line[0][i], history, &cmd)) != -1)//seg quand la commande est exit
 			{
 				if (!ret)
 					return (0);
-				ft_printf("str: %s\n", cmd);
+				(*line)[i] = '\0';
+				if (!(*line = ft_strjoinfree(*line, cmd)))
+				{
+					ft_strdel(&cmd);
+					return (0);
+				}
 			}
 			else
 			{
-				ft_dprintf(2, "42sh: %s: event not found\n", line);
+				ft_dprintf(2, "42sh: %s: event not found\n", *line);
 				break;
 			}
 		}
 		i++;
 	}
 	if (ret != -1)
-		add_cmd(line, history);
+	{
+		ft_printf("%s\n", *line);
+		add_cmd(*line, history);
+	}
 	return (ret);
 }
 
@@ -428,7 +460,7 @@ static int 	history_move(t_history *history_2, char **cmd, int flag)
 	return (0);
 }
 
-int		history(int flag, char *line, char **cmd)
+int		history(int flag, char **line, char **cmd)
 {
 	static t_history	history = {NULL, NULL, NULL};
 	static char			*home = NULL;
@@ -442,8 +474,8 @@ int		history(int flag, char *line, char **cmd)
 	if (flag == ADD_CMD)
 		return (history_cmd(line, &history));
 	if (flag == SEARCH)
-		return (ft_search(&history, line, cmd));//from anywhere
+		return (ft_search(&history, *line, cmd));//from anywhere
 	if (flag == HISTORY_SEARCH)
-		return (search_history(&history, line, cmd));//debut fin
+		return (search_history(&history, *line, cmd, 0));//debut fin
 	return (0);
 }

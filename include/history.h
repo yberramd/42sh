@@ -47,5 +47,5 @@ typedef struct	s_history
 	struct s_history *previous;
 }				t_history;
 
-int		history(int flag, char *line, char **cmd);
+int		history(int flag, char **line, char **cmd);
 #endif
