@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:32:13 by abarthel          #+#    #+#             */
-/*   Updated: 2019/10/15 17:35:05 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/10/16 21:48:28 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ int		main(int argc, char **argv)
 	int		status;
 	
 	(void)argc;
-	status = 0;
 	copybuff = NULL;
 	g_progname = argv[0];
 	if (!(history(INIT, NULL, NULL)))
@@ -91,27 +90,33 @@ int		main(int argc, char **argv)
 	set_signals(0);
 	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		if (!(history(ADD_CMD, &input, NULL)))
+		if (!((status = history(ADD_CMD, &input, NULL))))
 		{	
 			psherror(e_cannot_allocate_memory, argv[0], e_cmd_type);
 			return (1);
 		}
-		args = lexer(&input);
-		ft_memdel((void**)&input);
-		if (!args)
-			continue;
-		status = synt(args);
-		if (status != e_success)
+		if (status != -1)
 		{
-			g_retval = status;
+			args = lexer(&input);
+			ft_memdel((void**)&input);
+			if (!args)
+				continue;
+			status = synt(args);
+			if (status != e_success)
+			{
+				g_retval = status;
+				ft_tabdel(&args);
+				continue;
+			}
+			g_retval = jcont(args, environ);
 			ft_tabdel(&args);
-			continue;
 		}
-		g_retval = jcont(args, environ);
-		ft_tabdel(&args);
+		else
+			ft_memdel((void**)&input);
 	}
 	history(DELETE, NULL, NULL);
 	ft_tabdel(&environ);
 	ft_strdel(&copybuff);
+	ft_free_bintable();
 	return (0);
 }

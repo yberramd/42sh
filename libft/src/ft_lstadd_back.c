@@ -1,29 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strfchr.c                                       :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yberramd <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tgouedar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/13 15:49:43 by yberramd          #+#    #+#             */
-/*   Updated: 2019/10/21 16:38:51 by yberramd         ###   ########.fr       */
+/*   Created: 2018/11/15 13:21:10 by tgouedar          #+#    #+#             */
+/*   Updated: 2019/10/16 15:59:29 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_strfchr(char *str1, char *str2)
+void	ft_lstadd_back(t_list **alst, t_list *new_back)
 {
-	int	i;
+	t_list	*voyager;
 
-	i = 0;
-	while (str1[i] != '\0' && str2[i] != '\0')
+	if (!alst)
+		return ;
+	if (!(*alst))
+		*alst = new_back;
+	else
 	{
-		if (str1[i] != str2[i])
-			return (0);
-		i++;
+		voyager = *alst;
+		while (voyager->next)
+			voyager = voyager->next;
+		voyager->next = new_back;
 	}
-	if (str1[i] == '\0' && str2 != '\0')
-		return (0);
-	return (1);
 }
