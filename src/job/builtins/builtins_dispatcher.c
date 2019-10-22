@@ -30,13 +30,14 @@ const t_builtins	g_builtins[] =
 	{ "false", &cmd_false},
 	{ "type", &cmd_type},
 	{ "history", &cmd_history},
+	{ "fc", &cmd_fc},
 	{ "\0", NULL}
 };
 
 _Bool	prior_builtin(char *str)
 {
 	const struct s_prior_builtin	pbuiltin_list[] =
-	{ {"echo"}, {"exit"}, {"hash"}, {"setenv"}, {"unsetenv"}, {"pwd"}, {"cd"}, {"type"}, {"\0"} };
+	{ {"echo"}, {"exit"}, {"hash"}, {"setenv"}, {"unsetenv"}, {"pwd"}, {"cd"}, {"type"}, {"fc"}, {"\0"} };
 	int	i;
 
 	i = 0;

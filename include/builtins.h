@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:33:04 by abarthel          #+#    #+#             */
-/*   Updated: 2019/10/16 21:50:53 by tgouedar         ###   ########.fr       */
+/*   Updated: 2019/10/22 12:38:14 by yberramd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int				cmd_pwd(int argc, char **argv);
 int				cmd_hash(int argc, char **argv);
 int				cmd_cd(int argc, char **argv);
 int				cmd_history(int argc, char **argv);
+int				cmd_fc(int argc, char **argv);
 
 /*
 ** Functions in builtins_dispatcher.c

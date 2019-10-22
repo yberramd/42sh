@@ -349,21 +349,24 @@ static int	ft_str_exclamation_chr(char *str1, char *str2)
 
 static int	exclamation_search_history(t_history *history, char *line, char **cmd)
 {
-	while (history->next)
-		history = history->next;
-	while (history->previous)
+	if (history)
 	{
+		while (history->next)
+			history = history->next;
+		while (history->previous)
+		{
+			if (history->str != NULL && line != NULL && ft_str_exclamation_chr(history->str, line) != 0)
+			{
+				*cmd = history->str;
+				return (2);
+			}
+			history = history->previous;
+		}
 		if (history->str != NULL && line != NULL && ft_str_exclamation_chr(history->str, line) != 0)
 		{
 			*cmd = history->str;
 			return (2);
 		}
-		history = history->previous;
-	}
-	if (history->str != NULL && line != NULL && ft_str_exclamation_chr(history->str, line) != 0)
-	{
-		*cmd = history->str;
-		return (2);
 	}
 	return (-1);
 }

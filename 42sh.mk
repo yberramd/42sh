@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2019/10/21 19:11:28 by yberramd         ###   ########.fr        #
+#    Updated: 2019/10/22 12:41:23 by yberramd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,7 @@ SOURCES			:=		main.c \
 						job/builtins/builtin_pwd.c \
 						job/builtins/builtin_hash.c \
 						job/builtins/builtin_history.c \
+						job/builtins/builtin_fc.c \
 						job/builtins/builtin_setenv.c \
 						job/builtins/builtin_unsetenv.c \
 						job/builtins/builtin_truefalse.c \
