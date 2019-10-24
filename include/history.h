@@ -12,6 +12,22 @@
 
 #ifndef HISTORY_H
 # define HISTORY_H
+# ifndef O_RDONLY
+# define O_RDONLY 0
+# endif
+# ifndef O_WRONLY
+# define O_WRONLY 1
+# endif
+# ifndef O_RDWR
+# define O_RDWR 2
+# endif 
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include "libft.h"
+
 enum {
 	INIT,
 	DELETE,
@@ -24,21 +40,14 @@ enum {
 	FIRST,
 	LAST,
 };
-# include <sys/types.h>
-# include <sys/uio.h>
-# include <fcntl.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include "libft.h"
-# ifndef O_RDONLY
-# define O_RDONLY 0
-# endif
-# ifndef O_WRONLY
-# define O_WRONLY 1
-# endif
-# ifndef O_RDWR
-# define O_RDWR 2
-# endif 
+
+enum {
+	ARG_L = 1,
+	ARG_R = 2,
+	ARG_S = 4,
+	ARG_N = 8,
+	ARG_E = 16,
+};
 
 typedef struct	s_history
 {
