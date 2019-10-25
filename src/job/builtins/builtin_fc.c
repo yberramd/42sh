@@ -67,12 +67,11 @@ static int		ft_print_history(int arg, int index, char **argv)
 	max = 1;
 	(void)arg;
 	history(FIRST, NULL, &cmd);
-	ft_printf("index[%d]\n", index);// PB avec fc -lnr
+	while (history(FORWARD, NULL, &cmd) != 2 && cmd)
+		max++;
 	if (argv[index])
 	{
 		nbr = ft_atoi_history(argv[index]);
-		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
-			max++;
 		max -= nbr;
 		history(FIRST, NULL, &cmd);
 		if (history(GET, NULL, &cmd) && (i - max) > 0)
@@ -86,14 +85,21 @@ static int		ft_print_history(int arg, int index, char **argv)
 	}
 	else
 	{
-		if (history(GET, NULL, &cmd))
-			ft_printf("\t%d\t%s\n", i, cmd);// ARG_N && ARG_R
+		max -= 16;
+		history(FIRST, NULL, &cmd);
+		if (history(GET, NULL, &cmd) && (i - max) > 0)
+		{
+			if (!(arg & ARG_N))
+				ft_printf("%d", i);
+			ft_printf("\t%s\n", cmd);// ARG_R
+		}
 		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
 		{
 			i++;
-			if (!(arg & ARG_N))
+			if (!(arg & ARG_N) && (i - max) > 0)
 				ft_printf("%d", i);
-			ft_printf("\t%s\n", cmd);
+			if ((i - max) > 0)
+				ft_printf("\t%s\n", cmd);
 		}
 	}
 	return (1);
@@ -126,8 +132,9 @@ int		cmd_fc(int argc, char **argv)
 			ft_printf("fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
 			return (0);
 		}
-		index++;
 	}
+	while (argv[index] && argv[index][0] == '-')
+		index++;
 	if (arg & ARG_S)
 		ft_execute();
 	else if (arg & ARG_L)
