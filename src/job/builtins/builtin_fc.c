@@ -87,19 +87,33 @@ static int		ft_print_history(int arg, int index, char **argv)
 	{
 		max -= 16;
 		history(FIRST, NULL, &cmd);
-		if (history(GET, NULL, &cmd) && (i - max) > 0)
+		if (history(GET, NULL, &cmd) && (i - max) > 0 && !(arg & ARG_R))
 		{
 			if (!(arg & ARG_N))
 				ft_printf("%d", i);
-			ft_printf("\t%s\n", cmd);// ARG_R
+			ft_printf("\t%s\n", cmd);
 		}
 		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
 		{
 			i++;
+			if (!(arg & ARG_N) && (i - max) > 0 && !(arg & ARG_R))
+				ft_printf("%d", i);
+			if ((i - max) > 0 && !(arg & ARG_R))
+				ft_printf("\t%s\n", cmd);
+		}
+		if (arg & ARG_R)
+		{
+			if (!(arg & ARG_N))
+				ft_printf("%d", i);
+			ft_printf("\t%s\n", cmd);
+		while (history(BACKWARD, NULL, &cmd) != 2 && cmd && (i - max) > 0)
+		{
+			i--;
 			if (!(arg & ARG_N) && (i - max) > 0)
 				ft_printf("%d", i);
 			if ((i - max) > 0)
 				ft_printf("\t%s\n", cmd);
+		}
 		}
 	}
 	return (1);
@@ -115,7 +129,7 @@ int		cmd_fc(int argc, char **argv)
 	arg = 0;
 	optind = RESET_OPTIND;
 	opterr = 1;
-	while ((opt = getopt(argc, argv, "rnlse:")) != -1)// A REMPLACER PAR FT_GETOPT DE ANTOINE
+	while ((opt = getopt(argc, argv, "rnlse:")) != -1)// A REMPLACER PAR FT_GETOPT DE ANTOINE/**/
 	{
 		if (opt == 108)/*[l]*/
 			arg = arg | ARG_L;
