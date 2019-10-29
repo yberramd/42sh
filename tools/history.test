@@ -1,0 +1,6 @@
+history 45
+history
+fc -lnr
+fc -l
+fc -ln
+fc -lr

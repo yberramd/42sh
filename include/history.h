@@ -47,6 +47,7 @@ enum {
 	ARG_S = 4,
 	ARG_N = 8,
 	ARG_E = 16,
+	ARG_NUMBER = 32,
 };
 
 typedef struct	s_history
