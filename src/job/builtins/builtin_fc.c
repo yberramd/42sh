@@ -98,14 +98,54 @@ static void		ft_no_number(int arg, int max)
 	}
 }
 
-static int		ft_print_history(int arg, int index, char **argv)
+static void		ft_one_number(int arg, int index, char **argv, int max)
 {
-	int		i;
-	int		max;
 	int		nbr;
+	int		i;
 	char	*cmd;
 
 	i = 1;
+	nbr = ft_atoi_history(argv[index]);
+	if (!nbr) // S'IL EST EGAL A 0
+		nbr = 500;
+	else if (nbr > 0)// S'IL est SUPERIEUR A 0
+	{
+		history(FIRST, NULL, &cmd);
+		if (!(arg & ARG_R) && i != max && history(GET, NULL, &cmd) && ((i - nbr) >= 0 || (i == max - 1)))
+		{
+			if (!(arg & ARG_N))
+				ft_printf("%d", i);
+			ft_printf("\t%s\n", cmd);
+		}
+		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
+		{
+			i++;
+			if (i != max && !(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)) && !(arg & ARG_R))
+				ft_printf("%d", i);
+			if (i != max && ((i - nbr) >= 0 || (i == max - 1)) && !(arg & ARG_R))
+				ft_printf("\t%s\n", cmd);
+		}
+		if (arg & ARG_R)// SI ARG R EST UTILISER
+		{
+			while (history(BACKWARD, NULL, &cmd) != 2 && cmd)
+			{
+				i--;
+				if (!(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)))
+					ft_printf("%d", i);
+				if ((i - nbr) >= 0 || (i == max - 1))
+					ft_printf("\t%s\n", cmd);
+			}
+		}
+	}
+	else if (nbr < 0)// S'IL EST NEGATIF
+		ft_printf("NEGATIF\n");
+}
+
+static int		ft_print_history(int arg, int index, char **argv)
+{
+	int		max;
+	char	*cmd;
+
 	max = 1;
 	(void)arg;
 	history(FIRST, NULL, &cmd);
@@ -114,46 +154,9 @@ static int		ft_print_history(int arg, int index, char **argv)
 	if (argv[index])
 	{
 		if (argv[index + 1] == NULL)// QUAND IL Y A 1 NOMBRE
-		{
-			nbr = ft_atoi_history(argv[index]);
-			if (!nbr) // S'IL EST EGAL A 0
-				nbr = 500;
-			else if (nbr > 0)// S'IL est SUPERIEUR A 0
-			{
-				history(FIRST, NULL, &cmd);
-				if (!(arg & ARG_R) && i != max && history(GET, NULL, &cmd) && ((i - nbr) >= 0 || (i == max - 1)))
-				{
-					if (!(arg & ARG_N))
-						ft_printf("%d", i);
-					ft_printf("\t%s\n", cmd);
-				}
-				while (history(FORWARD, NULL, &cmd) != 2 && cmd)
-				{
-					i++;
-					if (i != max && !(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)) && !(arg | ARG_R))
-						ft_printf("%d", i);
-					if (i != max && ((i - nbr) >= 0 || (i == max - 1)) && !(arg | ARG_R))
-						ft_printf("\t%s\n", cmd);
-				}
-				if (arg | ARG_R)// SI ARG R EST UTILISER
-				{
-					while (history(BACKWARD, NULL, &cmd) != 2 && cmd)
-					{
-						i--;
-						if (!(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)))
-							ft_printf("%d", i);
-						if ((i - nbr) >= 0 || (i == max - 1))
-							ft_printf("\t%s\n", cmd);
-					}
-				}
-			}
-			else if (nbr < 0)// S'IL EST NEGATIF
-				ft_printf("NEGATIF\n");
-		}
+			ft_one_number(arg, index, argv, max);
 		else// S'IL IL Y A DEUX NBR
-		{
 			ft_printf("COUCOU\n");
-		}
 	}
 	else
 		ft_no_number(arg, max);
