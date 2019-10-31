@@ -240,7 +240,7 @@ int		cmd_fc(int argc, char **argv)
 			arg = arg | ARG_R;
 		else if (opt == 101)/*[e]*/
 			arg = arg | ARG_E;
-		else if (opt >= 48 && opt <= 57)/*[e]*/
+		else if (opt >= 48 && opt <= 57)/*[nbr]*/
 			arg = arg | ARG_NUMBER;
 		else
 		{
@@ -250,7 +250,7 @@ int		cmd_fc(int argc, char **argv)
 	}
 	while (argv[index] && argv[index][0] == '-' && !ft_isdigit(argv[index][1]))
 		index++;
-	if (argv[index][0] == '-' && !ft_verif(argv[index]))//VERIF
+	if (argv[index] && argv[index][0] == '-' && !ft_verif(argv[index]))//VERIF
 		return (0);
 	if (arg & ARG_S)
 		ft_execute();
