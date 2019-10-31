@@ -71,7 +71,7 @@ static void		ft_no_number(int arg, int max)
 	i = 1;
 	max -= 17;
 	history(FIRST, NULL, &cmd);
-	if (history(GET, NULL, &cmd) && (i - max) > 0 && !(arg & ARG_R))
+	if (history(GET, NULL, &cmd) && (i - max) > 0 && !(arg & ARG_R) && i != (max + 17))//message d'erreur si l'historique est vide (A AJOUTER)
 	{
 		if (!(arg & ARG_N))
 			ft_printf("%d", i);
@@ -106,9 +106,9 @@ static void		ft_one_number(int arg, int index, char **argv, int max)
 
 	i = 1;
 	nbr = ft_atoi_history(argv[index]);
-	if (!nbr) // S'IL EST EGAL A 0
+	if (nbr == 0) // S'IL EST EGAL A 0
 		nbr = 500;
-	else if (nbr > 0)// S'IL est SUPERIEUR A 0
+	if (nbr > 0)// S'IL est SUPERIEUR A 0
 	{
 		history(FIRST, NULL, &cmd);
 		if (!(arg & ARG_R) && i != max && history(GET, NULL, &cmd) && ((i - nbr) >= 0 || (i == max - 1)))
@@ -138,7 +138,36 @@ static void		ft_one_number(int arg, int index, char **argv, int max)
 		}
 	}
 	else if (nbr < 0)// S'IL EST NEGATIF
-		ft_printf("NEGATIF\n");
+	{
+		nbr -= 1;
+		max += nbr;
+		history(FIRST, NULL, &cmd);
+		if (history(GET, NULL, &cmd) && (i - max) > 0 && !(arg & ARG_R) && i != (max - nbr))
+		{
+			if (!(arg & ARG_N))
+				ft_printf("%d", i);
+			ft_printf("\t%s\n", cmd);
+		}
+		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
+		{
+			i++;
+			if (!(arg & ARG_N) && (i - max) > 0 && !(arg & ARG_R) && i != (max - nbr))
+				ft_printf("%d", i);
+			if ((i - max) > 0 && !(arg & ARG_R) && i != (max - nbr))
+				ft_printf("\t%s\n", cmd);
+		}
+		if (arg & ARG_R)
+		{
+			while (history(BACKWARD, NULL, &cmd) != 2 && cmd && (i - max) > 0)
+			{
+				i--;
+				if (!(arg & ARG_N) && (i - max) > 0)
+					ft_printf("%d", i);
+				if ((i - max) > 0)
+					ft_printf("\t%s\n", cmd);
+			}
+		}
+	}
 }
 
 static int		ft_print_history(int arg, int index, char **argv)
@@ -154,12 +183,22 @@ static int		ft_print_history(int arg, int index, char **argv)
 	if (argv[index])
 	{
 		if (argv[index + 1] == NULL)// QUAND IL Y A 1 NOMBRE
-			ft_one_number(arg, index, argv, max);
+		{
+			if (argv[index][0] == '-' || ft_isdigit(argv[index][0]))
+				ft_one_number(arg, index, argv, max);
+			else
+				ft_dprintf(2, "42sh: fc: %s: numeric argument required\n", argv[index]);
+		}
 		else// S'IL IL Y A DEUX NBR
 			ft_printf("COUCOU\n");
 	}
 	else
 		ft_no_number(arg, max);
+	return (1);
+}
+
+static int ft_verif(char *str)
+{
 	return (1);
 }
 
@@ -195,6 +234,8 @@ int		cmd_fc(int argc, char **argv)
 	}
 	while (argv[index] && argv[index][0] == '-' && !ft_isdigit(argv[index][1]))
 		index++;
+	if (!ft_verif(argv[index]))//VERIF
+		return (0);
 	if (arg & ARG_S)
 		ft_execute();
 	else if (arg & ARG_L)
