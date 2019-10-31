@@ -199,6 +199,22 @@ static int		ft_print_history(int arg, int index, char **argv)
 
 static int ft_verif(char *str)
 {
+	int i;
+
+	i = 1;
+	if (str)
+	{
+		while (str[i] != '\0')
+		{
+			if (!ft_isdigit(str[i]))
+			{
+				ft_dprintf(2,"42sh: fc: %.2s invalid option\n", str);
+				ft_dprintf(2,"fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
+				return (0);
+			}
+			i++;
+		}
+	}
 	return (1);
 }
 
@@ -234,7 +250,7 @@ int		cmd_fc(int argc, char **argv)
 	}
 	while (argv[index] && argv[index][0] == '-' && !ft_isdigit(argv[index][1]))
 		index++;
-	if (!ft_verif(argv[index]))//VERIF
+	if (argv[index][0] == '-' && !ft_verif(argv[index]))//VERIF
 		return (0);
 	if (arg & ARG_S)
 		ft_execute();
