@@ -59,7 +59,7 @@ static int		ft_execute()
 
 static int		ft_fc()
 {
-	ft_printf("fc\n");
+	ft_printf("fc loloolololoololol\n");
 	return (1);
 }
 
@@ -249,15 +249,16 @@ static int ft_strisdigit(char *str)
 }
 int		cmd_fc(int argc, char **argv)
 {
-	int	opt;
-	int	arg;
-	int	index;
+	int		opt;
+	int		arg;
+	char	optstring[] = ":rnl:se:";
+	int		index;
 
 	index = 1;
 	arg = 0;
 	optind = RESET_OPTIND;
 	opterr = 1;
-	while ((opt = getopt(argc, argv, "rnlse:0123456789")) != -1)// A REMPLACER PAR FT_GETOPT DE ANTOINE/**/
+	while ((opt = getopt(argc, argv, optstring)) != -1)// A REMPLACER PAR FT_GETOPT DE ANTOINE/**/
 	{
 		if (opt == 108)/*[l]*/
 			arg = arg | ARG_L;
@@ -271,6 +272,14 @@ int		cmd_fc(int argc, char **argv)
 			arg = arg | ARG_E;
 		else if (opt >= 48 && opt <= 57)/*[nbr]*/
 			arg = arg | ARG_NUMBER;
+		else if (opt == 58)/*[:]*/
+			ft_printf("optstring[%d] = %c\n", optind, optstring[optind]);
+		else if (opt == 63)/*[?]*/
+		{
+			ft_printf("42sh: fc: -%c: invalid option\n", optopt);
+			ft_printf("fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
+			return (0);
+		}
 		else
 		{
 			ft_printf("fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
