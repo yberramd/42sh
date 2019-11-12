@@ -45,7 +45,7 @@ static int		ft_atoi_history(const char *str)
 		val = str[i] ^ ((1 << 5) | (1 << 4));
 		nbr = nbr * 10 + val;
 		if (nbr > 500)
-			return (501);
+			return (501 * sign);
 		++i;
 	}
 	return (nbr * sign);
@@ -170,6 +170,11 @@ static void		ft_one_number(int arg, int index, char **argv, int max)
 	}
 }
 
+/*static void		ft_two_number(int arg, int index, char **argv, int max)
+{
+
+}*/
+
 static int		ft_print_history(int arg, int index, char **argv)
 {
 	int		max;
@@ -191,6 +196,7 @@ static int		ft_print_history(int arg, int index, char **argv)
 		}
 		else// S'IL IL Y A DEUX NBR
 			ft_printf("COUCOU\n");
+			//ft_two_number(arg, index, argv, max);
 	}
 	else
 		ft_no_number(arg, max);
@@ -200,17 +206,27 @@ static int		ft_print_history(int arg, int index, char **argv)
 static int ft_verif(char *str)
 {
 	int i;
+	int y;
 
 	i = 1;
+	y = 1;
 	if (str)
 	{
 		while (str[i] != '\0')
 		{
-			if (!ft_isdigit(str[i]))
+			if (ft_isdigit(str[i]))
 			{
-				ft_dprintf(2,"42sh: fc: %.2s invalid option\n", str);
-				ft_dprintf(2,"fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
-				return (0);
+				while (str[y] != '\0')
+				{
+					if (!ft_isdigit(str[y]))
+					{
+						ft_dprintf(2,"42sh: fc: %.2s invalid option\n", str);
+						ft_dprintf(2,"fc: usage: fc [-e ename] [-lnr] [first] [last] or fc -s [pat=rep] [command]\n");
+						return (0);
+					}
+					y++;
+				}
+				return (1);
 			}
 			i++;
 		}
@@ -218,6 +234,19 @@ static int ft_verif(char *str)
 	return (1);
 }
 
+static int ft_strisdigit(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 int		cmd_fc(int argc, char **argv)
 {
 	int	opt;
@@ -248,8 +277,9 @@ int		cmd_fc(int argc, char **argv)
 			return (0);
 		}
 	}
-	while (argv[index] && argv[index][0] == '-' && !ft_isdigit(argv[index][1]))
+	while (argv[index] && argv[index][0] == '-' && !ft_strisdigit(&argv[index][1]))//PB
 		index++;
+	ft_printf("%s\n", argv[index]);
 	if (argv[index] && argv[index][0] == '-' && !ft_verif(argv[index]))//VERIF
 		return (0);
 	if (arg & ARG_S)
