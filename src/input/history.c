@@ -56,7 +56,7 @@ static int 	write_history(t_history *history, char *home)
 		return (-1);
 	while (history && history->next)
 		history = history->next;
-	while (history && history->previous && len < 500)
+	while (history && history->previous && len < 499)
 	{
 		len++;
 		history = history->previous;
@@ -70,7 +70,7 @@ static int 	write_history(t_history *history, char *home)
 		}
 		history = history->next;
 	}
-	if (w_history(history->str, fd) == -1)//n'ecrit pas la derniere commande (exit)
+	if (history && w_history(history->str, fd) == -1)
 	{
 		close(fd);
 		return (-1);
@@ -325,7 +325,7 @@ static int	ft_str_exclamation_chr(char *str1, char *str2)
 			return (0);
 		i++;
 	}
-	if (str1[i] == '\0' && (str2 != '\0' || !ft_isseparator(&str2[i])))
+	if (str1[i] == '\0' && (str2 != NULL || !ft_isseparator(&str2[i])))
 		return (0);
 	return (1);
 }
