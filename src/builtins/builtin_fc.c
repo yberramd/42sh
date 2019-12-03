@@ -17,11 +17,7 @@
 #include "libft.h"
 #include "ft_getopt.h"
 
-extern char	*optarg;
-extern int	optind;
-extern int	optopt;
-extern int	opterr;
-extern int	optreset;
+#define INT_MAX 2147483647
 
 static void		ft_strdel_option(char ***option)
 {
@@ -38,7 +34,7 @@ static void		ft_strdel_option(char ***option)
 
 static int		ft_atoi_history(const char *str)
 {
-	unsigned long	nbr;
+	unsigned int	nbr;
 	int				i;
 	int				sign;
 	unsigned short	val;
@@ -56,7 +52,7 @@ static int		ft_atoi_history(const char *str)
 	while (str[i] > 47 && str[i] < 58)
 	{
 		val = str[i] ^ ((1 << 5) | (1 << 4));
-		if (nbr > nbr * 10 + val)
+		if (nbr > (nbr * 10 + val))
 			return (nbr * sign);
 		nbr = nbr * 10 + val;
 		++i;
@@ -111,20 +107,19 @@ static void		ft_no_number(int arg, int max)
 	}
 }
 
-static void		ft_one_number(int arg, char *str_nbr, int max)// a utiliser pour les deux nbr
+static void		ft_number(int arg, int nbr, int nbr2, int max)
 {
-	int		nbr;
 	int		i;
 	char	*cmd;
 
 	i = 1;
-	nbr = ft_atoi_history(str_nbr);//SI NBR SUPP a 500 PB
+	(void)nbr2;
 	if (nbr == 0) // S'IL EST EGAL A 0
-		nbr = 500;
-	else if (nbr > 0)// S'IL est SUPERIEUR A 0
+		nbr = INT_MAX;
+	if (nbr > 0)// S'IL est SUPERIEUR A 0
 	{
 		history(FIRST, NULL, &cmd);
-		if (!(arg & ARG_R) && i != max && history(GET, NULL, &cmd) && ((i - nbr) >= 0 || (i == max - 1)))
+		if (!(arg & ARG_R) && i != max && history(GET, NULL, &cmd) && ((i - nbr) >= 0 || (i == max - 1)) && (i - nbr2) <= 0)
 		{
 			if (!(arg & ARG_N))
 				ft_printf("%d", i);
@@ -133,9 +128,9 @@ static void		ft_one_number(int arg, char *str_nbr, int max)// a utiliser pour le
 		while (history(FORWARD, NULL, &cmd) != 2 && cmd)
 		{
 			i++;
-			if (i != max && !(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)) && !(arg & ARG_R))
+			if (i != max && !(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)) && !(arg & ARG_R) && (i - nbr2) <= 0)
 				ft_printf("%d", i);
-			if (i != max && ((i - nbr) >= 0 || (i == max - 1)) && !(arg & ARG_R))
+			if (i != max && ((i - nbr) >= 0 || (i == max - 1)) && !(arg & ARG_R) && (i - nbr2) <= 0)
 				ft_printf("\t%s\n", cmd);
 		}
 		if (arg & ARG_R)// SI ARG R EST UTILISER
@@ -143,9 +138,9 @@ static void		ft_one_number(int arg, char *str_nbr, int max)// a utiliser pour le
 			while (history(BACKWARD, NULL, &cmd) != 2 && cmd)
 			{
 				i--;
-				if (!(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)))
+				if (!(arg & ARG_N) && ((i - nbr) >= 0 || i == (max - 1)) && (i - nbr2) <= 0)
 					ft_printf("%d", i);
-				if ((i - nbr) >= 0 || (i == max - 1))
+				if (((i - nbr) >= 0 || (i == max - 1)) && (i - nbr2) <= 0)
 					ft_printf("\t%s\n", cmd);
 			}
 		}
@@ -183,10 +178,35 @@ static void		ft_one_number(int arg, char *str_nbr, int max)// a utiliser pour le
 	}
 }
 
-/*static void		ft_two_number(int arg, int index, char **argv, int max)
+static void		ft_one_number(int arg, char *str_nbr, int max)// a utiliser pour les deux nbr
 {
+	int		nbr;
 
-}*/
+	nbr = ft_atoi_history(str_nbr);//SI NBR SUPP a 500 PB
+	ft_number(arg, nbr, INT_MAX, max);
+}
+
+static void		ft_two_number(int arg, char **argv, int max)
+{
+	int nbr[2];
+
+	nbr[0] = ft_atoi_history(argv[0]);
+	nbr[1] = ft_atoi_history(argv[1]);
+	if (nbr[1] == 0)
+		ft_number(arg, nbr[0], INT_MAX, max);
+	else if (nbr[0] == 0)
+	{
+		arg = arg | ARG_R;
+		ft_number(arg, nbr[1], INT_MAX, max);
+	}
+	else if (nbr[0] - nbr[1] > 0)
+	{
+		arg = arg | ARG_R;
+		ft_number(arg, nbr[1], nbr[0], max);
+	}
+	else
+		ft_number(arg, nbr[0], nbr[1], max);
+}
 
 static int ft_strisnbr(char *str)
 {
@@ -217,7 +237,7 @@ static int		ft_print_history(int arg, char **argv)
 		max++;
 	if (argv[0] && argv[1])
 	{
-		ft_printf("2 NUMBERS\n");//ft_two_number(arg, index, argv, max);
+		ft_two_number(arg, argv, max);
 		ft_strdel(&argv[0]);
 		argv[0] = NULL;
 		ft_strdel(&argv[1]);
