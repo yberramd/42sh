@@ -192,6 +192,10 @@ static void		ft_two_number(int arg, char **argv, int max)
 
 	nbr[0] = ft_atoi_history(argv[0]);
 	nbr[1] = ft_atoi_history(argv[1]);
+	if (nbr[0] < 0)
+		nbr[0] = max + nbr[0];
+	if (nbr[1] < 0)
+		nbr[1] = max + nbr[1];
 	if (nbr[1] == 0)
 		ft_number(arg, nbr[0], INT_MAX, max);
 	else if (nbr[0] == 0)
