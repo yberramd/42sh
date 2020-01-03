@@ -6,7 +6,7 @@
 /*   By: bprunevi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/17 14:56:11 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/10/20 11:40:58 by bprunevi         ###   ########.fr       */
+/*   Updated: 2020/01/02 20:46:03 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,83 +15,86 @@
 #include "keys.h"
 #include "prompt.h"
 #include "display.h"
+#include "history.h"
 
 #include <unistd.h>
+#include <stdio.h>
 #include <term.h>
 #include <curses.h>
 #include <stdint.h>
 
-int toggle_termcaps()
-{
-	struct termios term;
 
-	if (tcgetattr(0, &term))
-		return(1);
-	term.c_lflag ^= ECHO;
-	term.c_lflag ^= ICANON;
-	if (tcsetattr(0, 0, &term))
-		return(1);
-	if (tgetent(NULL, getenv("TERM")) != 1)
-		return(1);
-	return(0);
+
+void	ft_init_cursor(t_cursor *cursor)
+{
+	cursor->prompt = NULL;
+	cursor->match = NULL;
+	cursor->in = SIZE_MAX;
+	cursor->start = 0;
+	cursor->end = 0;
+	cursor->match_ret = 0;
+	cursor->prompt_len = 0;
+	cursor->ctrl_r = 0;
+	cursor->on = 0;
 }
 
-int get_stdin(char *prompt, int prompt_len, char **buff)
+//int toggle_termcaps(void)
+//{
+//	struct termios	term;
+//
+//	term.c_cc[VMIN] = 1; /* si VTIME = 0 et ICANON desactive VMIN determine le nombre d'octets lus par read */
+//	term.c_cc[VTIME] = 0;
+//	if (tcgetattr(STDIN_FILENO, &term) < 0)
+//	{
+//		printf("Error tcgetattr");
+//		return (1);
+//	}
+//	term.c_lflag ^= (ECHO | ICANON | ISIG | IEXTEN);
+//	if (tcsetattr(STDIN_FILENO, TCSADRAIN, &term) < 0)
+//	{
+//		printf("Error tcsetattr");
+//		return (1);
+//	}
+//	if (tgetent(NULL, getenv("TERM")) != 1)
+//	{
+//		printf("Error tgetent");
+//		return (1);
+//	}
+//	return (0);
+//}
+
+void	toggle_sig_mode(void)
 {
-	size_t i;
-	size_t j;
-	size_t u;
-	char c;
+	struct termios	tattr;
 
-	i = 0;
-	j = 0;
-	u = SIZE_MAX;
-	inside_history = NULL;
-	*buff = ft_strdup("");
-	display(*buff, j, i, SIZE_MAX, prompt, prompt_len);
-	while (1)
-	{
-		if (read(0, &c, 1) == -1)
-			return(-1);
-		if (ft_isprint(c))
-			normal_char(buff, &j, &i, c);
-		else if (c == '\177')
-			backspace_key(buff, &j, &i);
-		else if (c == '\t')
-			tab_key(buff, &j, &i);
-		else if (c == '\033')
-			escape_char(buff, &j, &i, &u);
-		else if (c == '\n')
-		{
-			display(*buff, i, i, SIZE_MAX, prompt, prompt_len);
-			ft_strdel(&inside_history);
-			return(0);
-		}
-		display(*buff, j, i, u, prompt, prompt_len);
-	}
-	return(1);
+	tcgetattr(STDIN_FILENO, &tattr);
+	tattr.c_lflag ^= ISIG;
+	tcsetattr(STDIN_FILENO, TCSADRAIN, &tattr);
 }
-
 int read_command(char **buff)
 {
-	char *prompt;
-	char *tmp;
-	int prompt_len;
+	char		*tmp;
+	t_cursor	cursor;
 
-	if (!isatty(0))
-		return(1);
-	if (toggle_termcaps())
-		return(2);
-	prompt_len = mkprompt(&prompt);
-	get_stdin(prompt, prompt_len, buff);
+	ft_init_cursor(&cursor);
+	if (!isatty(STDIN_FILENO))
+		return (1);
+//	if (toggle_termcaps())
+//		return (2);
+	toggle_sig_mode();
+	cursor.prompt_len = mkprompt(&(cursor.prompt));
+	get_stdin(&cursor, buff);
 	write(1, "\n", 1);
-	while (**buff && (prompt_len = mkprompt_quote(*buff, &prompt)))
+	ft_init_cursor(&cursor);
+	while (**buff && (cursor.prompt_len = mkprompt_quote(*buff, &(cursor.prompt))))
 	{
-		get_stdin(prompt, prompt_len, &tmp);
+		get_stdin(&cursor, &tmp);
 		*buff = ft_strjoinfree(*buff, tmp);
+		ft_strdel(&(cursor.prompt));
 		write(1, "\n", 1);
+		ft_init_cursor(&cursor);
 	}
-	ft_strdel(&prompt);
-	toggle_termcaps();
-	return(0);
+	ft_strdel(&(cursor.prompt));
+	toggle_sig_mode();
+	return (0);
 }

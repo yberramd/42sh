@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:33:04 by abarthel          #+#    #+#             */
-/*   Updated: 2019/11/12 15:22:58 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/12/16 14:51:02 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,12 @@ int				cmd_history(int argc, char **argv);
 int				cmd_alias(int ac, char **av);
 int				cmd_unalias(int ac, char **av);
 int				cmd_set(int argc, char **argv);
+int				cmd_unset(int argc, char **argv);
+int				cmd_export(int argc, char **argv);
 int				cmd_fc(int argc, char **argv);
+int				cmd_fg(int ac, char **av);
+int				cmd_bg(int ac, char **av);
+int				cmd_jobs(int ac, char **av);
 
 /*
 ** Functions in builtins_dispatcher.c

@@ -6,7 +6,7 @@
 /*   By: yberramd <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/14 13:53:47 by yberramd          #+#    #+#             */
-/*   Updated: 2019/10/08 16:55:03 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/11/19 12:59:24 by baavril          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,18 +134,49 @@ static int	add_cmd(const char *line, t_history *history)
 	return (0);
 }
 
-static int	ft_search(t_history *history, const char *line, char **cmd)
+static int	ft_retinchr(char *str, char c)
 {
-	while (history->next)
-		history = history->next;
-	while (history->previous)
+	int i;
+
+	i = 0;
+	while (str[i])
 	{
-		if (history->str != NULL && line != NULL && ft_strstr(history->str, line) != NULL)
+		if (str[i] - c == 0)
+			return (i);
+		i++;
+	}
+	return (1);
+}
+
+static int	ft_search(t_history *history_2, const char *line, char **cmd, int flag)
+{
+	static t_history *history = NULL;
+
+	if (!history)
+	{
+		history = history_2;
+		while (history->next)
+			history = history->next;
+	}
+	if (flag == RESET)
+	{
+		while (history->next)
+			history = history->next;
+		return (1);
+	}
+	else
+	{
+		history_2 = history;
+		while (history_2->previous)
 		{
-			*cmd = history->str;
-			return (1);
+			if (history_2->str != NULL && line != NULL && *line && ft_strstr(history_2->str, line) != NULL)
+			{
+				history = history_2;
+				*cmd = history->str;
+				return (ft_retinchr(*cmd, line[0]));
+			}
+			history_2 = history_2->previous;
 		}
-		history = history->previous;
 	}
 	return (0);
 }
@@ -325,7 +356,7 @@ static int	ft_str_exclamation_chr(char *str1, char *str2)
 			return (0);
 		i++;
 	}
-	if (str1[i] == '\0' && (str2 != NULL || !ft_isseparator(&str2[i])))
+	if (str1[i] == '\0' && (str2[i] != '\0' || !ft_isseparator(&str2[i])))
 		return (0);
 	return (1);
 }
@@ -413,7 +444,7 @@ static int		history_cmd(char **line, t_history *history)
 	cmd = NULL; 
 	while ((*line)[i] != '\0')
 	{
-		if ((*line)[i] == '!')
+		if ((*line)[i] == '!' && (*line)[i + 1] != '\0' && !ft_isseparator(&(*line)[i + 1]))
 		{
 			if ((ret = exclamation_point(&line[0][i], history, &cmd)) != -1)//seg quand la commande est exit
 			{
@@ -422,6 +453,7 @@ static int		history_cmd(char **line, t_history *history)
 				(*line)[i] = '\0';
 				if (!(*line = ft_strjoinfree(*line, cmd)))
 				{
+					ft_printf("str [%s]\n", *line);
 					ft_strdel(&cmd);
 					return (0);
 				}
@@ -525,8 +557,8 @@ int		history(int flag, char **line, char **cmd)
 		return (delete(&history, home));
 	if (flag == ADD_CMD)
 		return (history_cmd(line, &history));
-	if (flag == SEARCH)
-		return (ft_search(&history, *line, cmd));//from anywhere [CMD+R]
+	if (flag == SEARCH || flag == RESET)
+		return (ft_search(&history, *line, cmd, flag));//from anywhere [CMD+R]
 	if (flag == HISTORY_SEARCH)
 		return (search_history(&history, *line, cmd));//debut fin [TAB]
 	return (0);

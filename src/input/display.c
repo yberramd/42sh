@@ -6,11 +6,12 @@
 /*   By: bprunevi <bprunevi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/03 15:25:22 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/11/06 14:02:51 by bprunevi         ###   ########.fr       */
+/*   Updated: 2019/11/20 15:46:10 by bprunevi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "input.h"
 
 #include <unistd.h>
 #include <term.h>
@@ -19,63 +20,72 @@
 #include <stdint.h>
 
 
-static int display_select(char *str, size_t start, size_t end)
+static int display_select(char *str, t_cursor *cursor)
 {
 	size_t swap;
-	if (start > end)
+
+	if (cursor->start > cursor->in)
 	{
-		swap = start;
-		start = end;
-		end = swap;
+		swap = cursor->start;
+		cursor->start = cursor->in;
+		cursor->in = swap;
 	}
-	write(1, str, start);
+	write(1, str, cursor->start);
 	ft_putstr(tgetstr("mr", NULL));
-	write(1, &str[start], end - start);
+	write(1, &str[cursor->start], cursor->in - cursor->start);
 	ft_putstr(tgetstr("me", NULL));
-	ft_putstr(&str[end]);
+	ft_putstr(&str[cursor->in]);
 	return(0);
 }
 
-static int display_all(char *str, size_t j, size_t i, size_t u, char *prompt, size_t prompt_len)
+static int display_all(char *str, t_cursor *cursor)
 {
-	size_t col = tgetnum("co");
+	size_t col;
 
+	col = tgetnum("co");
 	ft_putstr(tgetstr("cr", NULL));
 	ft_putstr(tgetstr("cd", NULL));
-	ft_putstr(prompt);
-	if (u == SIZE_MAX || u > i)
-		ft_putstr(str);
+	ft_putstr(cursor->prompt);
+	if (cursor->in == SIZE_MAX || cursor->in > cursor->end)
+		ft_putnstr(str, cursor->end);
 	else
-		display_select(str, j, u);
-	if (!((i + prompt_len) % col))
+		display_select(str, cursor);
+	if (!((cursor->end + cursor->prompt_len) % col))
 		write(1, "\n", 1);
-	return((j + prompt_len) / col);
+	return((cursor->start + cursor->prompt_len) / col);
 }
 
-int display(char *str, size_t j, size_t i, size_t u, char *prompt, size_t prompt_len)
+int display(char *str, t_cursor *cursor)
 {
-	size_t col = tgetnum("co");
+	size_t col;
 	size_t x;
 	static size_t lines_offset = 0;
+	size_t backup;
 
 	x = 0;
-
+	col = tgetnum("co");
+	backup = cursor->end;
+	if (cursor->end > cursor->start - (cursor->start % tgetnum("co")) + tgetnum("co") * tgetnum("li") - cursor->prompt_len - 1)
+		cursor->end = cursor->start - (cursor->start % tgetnum("co")) + tgetnum("co") * tgetnum("li") - cursor->prompt_len - 1;
+	if (tgetent(NULL, getenv("TERM")) != 1)
+		return(1);
 	// sets lines_offset value to normal if string is empty : ISSUE HERE
-	if (i == j && i == 0) // We enter this when opening a new, fresh prompt (usually after entering a command). This test is just not enough !
-		lines_offset = prompt_len / col;
+	if (cursor->end == cursor->start && cursor->end == 0) // We enter this when opening a new, fresh prompt (usually after entering a command). This test is just not enough !
+		lines_offset = cursor->prompt_len / col;
 
 	//use the value of lines_offset
 	while (lines_offset--)
 		ft_putstr(tgetstr("up", NULL));
 
 	//reset lines_offset value and display text
-	lines_offset = display_all(str, j, i, u, prompt, prompt_len);
+	lines_offset = display_all(str, cursor);
 
 	//Reposition cursor
-	x = ((i + prompt_len) / col) - lines_offset;
+	x = ((cursor->end + cursor->prompt_len) / col) - lines_offset;
 	while (x--)
 		ft_putstr(tgetstr("up", NULL));
-	ft_putstr(tgoto(tgetstr("ch", NULL), 0, (j + prompt_len) % col));
+	ft_putstr(tgoto(tgetstr("ch", NULL), 0, (cursor->start + cursor->prompt_len) % col));
 
+	cursor->end = backup;
 	return(0);
 }

@@ -6,7 +6,7 @@
 /*   By: bprunevi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/29 11:16:45 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/09/27 15:47:33 by bprunevi         ###   ########.fr       */
+/*   Updated: 2019/11/28 12:02:49 by bprunevi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,20 @@
 
 static char	next_valid_entry(char current_char, char previous_valid_entry)
 {
-	//ft_printf("nva(%c,%c)", current_char, previous_valid_entry);
-	if (previous_valid_entry == '`' || previous_valid_entry == '\"' || previous_valid_entry == '\'')
+	if (previous_valid_entry == '\\')
+		return(-1);
+	else if (  previous_valid_entry == '`' 
+			|| previous_valid_entry == '\"'
+			|| previous_valid_entry == '\'')
 	{
 		if (current_char == previous_valid_entry)
 			return(-1);
 	}
-	else if (previous_valid_entry == '{' && current_char == '}')
+	else if ((previous_valid_entry == '{' && current_char == '}')
+		  || (previous_valid_entry == '(' && current_char == ')'))
 		return(-1);
-	else if (previous_valid_entry == '(' && current_char == ')')
-		return(-1);
-	else if (ft_strchr("{(\'\"`", current_char))
-		return (current_char);
+	else if (ft_strchr("{(\'\"`\\\\", current_char))
+			return (current_char);
 	return(0);
 }
 
@@ -37,13 +39,9 @@ char *quote_prompt(char *command)
 	int size;
 
 	size = ft_strlen(command);
-	buff = malloc(size);
-	ft_bzero(buff, size);
-	if (command[size - 1] == '\\')
-	{
-		command[size - 1] = '\0';
-		buff[0] = '\\';
-	}
+	if (!(buff = (char *)malloc(sizeof(char) * (size + 1))))
+		return (NULL);
+	ft_bzero(buff, size + 1);
 	while (*command)
 	{
 		c = next_valid_entry(*(command++) , buff[0] ? buff[ft_strlen(buff) - 1] : buff[0]);
@@ -52,6 +50,9 @@ char *quote_prompt(char *command)
 		else if (c)
 			buff[ft_strlen(buff)] = c;
 	}
+	if (buff[0])
+		if (buff[ft_strlen(buff) - 1] == '\\')
+			*(command - 1) = '\0';
 	if (buff[0])
 		return (buff);
 	free(buff);

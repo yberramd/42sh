@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2019/11/05 16:13:49 by abarthel         ###   ########.fr        #
+#    Updated: 2019/12/16 22:15:39 by tgouedar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,6 +95,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_misc/ft_putnbr_octal.c \
 		f_misc/ft_putnbr_upphexa.c \
 		f_misc/ft_putstr.c \
+		f_misc/ft_putnstr.c \
 		f_misc/ft_putstr_fd.c \
 		f_misc/ft_putuint.c \
 		f_misc/ft_putuint_octal.c \
@@ -129,6 +130,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_misc/ft_strtrim.c \
 		f_misc/ft_swap.c \
 		f_misc/ft_tabcpy.c \
+		f_misc/ft_tab_rangecpy.c \
 		f_misc/ft_tabdel.c \
 		f_misc/ft_tablen.c \
 		f_misc/ft_tabmalloc.c \
@@ -167,6 +169,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_stdio/printf/str_format.c \
 		f_stdio/printf/wrapper.c \
 		f_stdlib/ft_atoi.c \
+		f_stdlib/ft_atou.c \
 		f_stdlib/ft_getenv.c \
 		f_stdlib/ft_realpath.c \
 		f_stdlib/ft_setenv.c \
@@ -177,6 +180,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_string/ft_memcpy.c \
 		f_string/ft_memmove.c \
 		f_string/ft_memset.c \
+		f_string/ft_isnumber.c \
 		f_string/ft_strcat.c \
 		f_string/ft_strchr.c \
 		f_string/ft_strcmp.c \

@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/06 20:52:32 by abarthel          #+#    #+#             */
-/*   Updated: 2019/10/16 21:51:54 by tgouedar         ###   ########.fr       */
+/*   Updated: 2020/01/03 11:32:03 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,13 @@
 #include "history.h"
 #include "builtins.h"
 #include "libft.h"
+#include "shell_variables.h"
 #include "error.h"
 #include "jcont.h"
+#include "input.h"
+
+extern int		g_retval;
+struct s_svar	*g_svar;
 
 static int	part_sep(int argc, char **argv)
 {
@@ -73,6 +78,21 @@ static void	nomatter_exit(char **argv, int i)
 	exit(2);
 }
 
+static void	ft_free_internvars(void)
+{
+	struct s_svar *tmp;
+
+	while (g_svar)
+	{
+		tmp = g_svar->next;
+		ft_strdel(&(g_svar->str));
+		ft_strdel(&(g_svar->key));
+		ft_strdel(&(g_svar->value));
+		free(g_svar);
+		g_svar = tmp;
+	}
+}
+
 int		cmd_exit(int argc, char **argv)
 {
 	extern char	**environ;
@@ -94,5 +114,8 @@ int		cmd_exit(int argc, char **argv)
 	ft_tabdel(&environ);
 	history(DELETE, NULL, NULL);
 	ft_free_bintable();
+	ft_free_internvars();
+	restore_term_mode();
+	system("leaks 42sh");
 	exit(status);
 }

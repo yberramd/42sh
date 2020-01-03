@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2019/12/03 17:11:28 by yberramd         ###   ########.fr        #
+#    Updated: 2020/01/03 19:11:42 by yberramd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,28 +15,43 @@ NAME			= 42sh
 SOURCES_PATH	:= ./src/
 
 SOURCES			:=		main.c \
-						transv/error.c \
-						transv/signals.c \
+						transversal/error.c \
+						transversal/signals.c \
 						input/input.c \
 						input/history.c \
 						input/keys.c \
 						input/prompt.c \
 						input/quote.c \
 						input/display.c \
-						lex/lexer.c \
-						lex/expansions/expansions.c \
-						lex/expansions/expansion_utils.c \
-						lex/expansions/get_param.c \
-						lex/expansions/parameter_expansions.c \
-						lex/expansions/tilde_expansion.c \
-						lex/separators/pipeline_separators.c \
-						lex/separators/unglue_sep.c \
-						jcont/synt.c \
-						jcont/synt_const.c \
-						jcont/jcont.c \
-						jcont/job.c \
-						jcont/path_concat.c \
+						input/analyzer.c \
+						input/keyboard_commands.c \
+						input/keyboard_dispatcher.c \
+						input/auto_completion/auto_completion.c \
+						input/auto_completion/tst.c \
+						lexer/lexer.c \
+						lexer/grammar_symbols.c \
+						lexer/separators/unglue_metachr.c \
+						lexer/separators/pipeline_separators.c \
+						expansions/expansions.c \
+						expansions/substitutions.c \
+						job_control/ft_launch_job.c \
+						job_control/ft_add_process.c \
+						job_control/ft_free_job.c \
+						job_control/ft_get_job.c \
+						job_control/ft_pop_job.c \
+						job_control/ft_get_process_pid.c \
+						job_control/ft_add_job.c \
+						job_control/ft_print_job.c \
+						job_control/ft_set_prio.c \
+						job_control/ft_sigchld_handler.c \
+						job_control/ft_update_job_status.c \
+						job_control/ft_wait_foreground.c \
+						job_control/path_concat.c \
+						job_control/get_sequence.c \
 						builtins/builtin_alias.c \
+						builtins/builtin_set.c \
+						builtins/builtin_unset.c \
+						builtins/builtin_export.c \
 						builtins/builtin_cd.c \
 						builtins/builtin_echo.c \
 						builtins/builtin_type.c \
@@ -49,6 +64,9 @@ SOURCES			:=		main.c \
 						builtins/builtin_unsetenv.c \
 						builtins/builtin_truefalse.c \
 						builtins/builtin_fc.c \
+						builtins/builtin_fg.c \
+						builtins/builtin_bg.c \
+						builtins/builtin_jobs.c \
 						builtins/builtin_test/test_free.c \
 						builtins/builtin_test/test_tools.c \
 						builtins/builtin_test/test_dispatchers.c \
@@ -64,24 +82,38 @@ SOURCES			:=		main.c \
 						builtins/builtin_test/test_precedence_mgt2.c \
 						builtins/builtins_dispatcher.c \
 						builtins/ft_putenv_table.c \
-						transv/hash_module/bash_routines.c \
-						transv/hash_module/corps_fini_tools.c \
-						transv/hash_module/ft_empty_htable.c \
-						transv/hash_module/ft_free_htable.c \
-						transv/hash_module/ft_get_entry.c \
-						transv/hash_module/ft_del_entry.c \
-						transv/hash_module/ft_hash.c \
-						transv/hash_module/ft_hash_path.c \
-						transv/hash_module/ft_insert.c \
-						transv/hash_module/ft_iter_htable.c \
-						transv/hash_module/ft_lst_entries.c \
-						transv/hash_module/ft_print_entries.c \
-						transv/hash_module/htable_type_dispatcher.c \
-						transv/hash_module/init_htable.c \
-						transv/hash_module/string_routines.c \
-						transv/shell_variables/assignement_shellvar.c \
-						transv/shell_variables/tools_parser_shell_variables.c \
-						transv/shell_variables/utils_shell_variables.c \
+						transversal/hash/bash_routines.c \
+						transversal/hash/corps_fini_tools.c \
+						transversal/hash/ft_empty_htable.c \
+						transversal/hash/ft_free_htable.c \
+						transversal/hash/ft_get_entry.c \
+						transversal/hash/ft_del_entry.c \
+						transversal/hash/ft_hash.c \
+						transversal/hash/ft_hash_path.c \
+						transversal/hash/ft_insert.c \
+						transversal/hash/ft_iter_htable.c \
+						transversal/hash/ft_lst_entries.c \
+						transversal/hash/ft_print_entries.c \
+						transversal/hash/htable_type_dispatcher.c \
+						transversal/hash/init_htable.c \
+						transversal/hash/string_routines.c \
+						transversal/shell_variables/shell_variables.c \
+						LL_parser/debug_gnt.c \
+						LL_parser/debug_interpreter.c \
+						LL_parser/io_redirect.c \
+						LL_parser/is_potential.c \
+						LL_parser/parser.c \
+						LL_parser/pipe_sequence.c \
+						LL_parser/simple_command.c \
+						LL_parser/terminals.c \
+						LL_parser/wordtypes.c \
+						interpreter/interpreter.c \
+						interpreter/i_simple_command.c \
+						interpreter/eval_command.c \
+						interpreter/i_redirect.c \
+						interpreter/i_heredoc.c
+
+#						job_control/job.c
 
 OBJECTS := $(patsubst %.c,%.o,$(addprefix $(SOURCES_PATH), $(SOURCES)))
 
@@ -103,7 +135,8 @@ LDLIBS += -ltermcap  $(PATH_LIB)libft.a
 
 LDFLAGS += $(CDEBUG)
 
-CFLAGS += -Wall -Wextra -Werror -ansi -D_POSIX_C_SOURCE -std=c99 $(CDEBUG)
+CFLAGS += -Wall -Wextra -Werror -ansi -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -std=c99 $(CDEBUG)
+
 #CFLAGS += -fno-builtin -O2
 
-CDEBUG += -g -fsanitize=address
+#CDEBUG += -g -fsanitize=address -fno-optimize-sibling-calls

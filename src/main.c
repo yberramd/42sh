@@ -6,10 +6,11 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:32:13 by abarthel          #+#    #+#             */
-/*   Updated: 2019/10/16 21:48:28 by tgouedar         ###   ########.fr       */
+/*   Updated: 2020/01/03 11:31:05 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <term.h>
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -17,24 +18,23 @@
 #include <signal.h>
 
 #include "libft.h"
+#include "shell_variables.h"
 #include "history.h"
 #include "sig_handler.h"
+#include "expansions.h"
 #include "builtins.h"
 #include "prompt.h"
 #include "input.h"
 #include "error.h"
 #include "lexer.h"
+#include "parser.h"
 #include "jcont.h"
 #include "synt.h"
 #include "path.h"
 
-
-int     assign_variable(char *str);
-
-
-
-int		g_retval;
-char	g_pwd[] = {0};
+int					g_retval;
+char				g_pwd[] = {0};
+struct termios		g_old_termios;
 
 static int	set_minimal_env(void)
 {
@@ -67,17 +67,41 @@ static int	set_minimal_env(void)
 	return (e_success);
 }
 
+void	raw_term_mode()
+{
+	struct termios	tattr;
+
+	tcgetattr(STDIN_FILENO, &tattr);
+	ft_memcpy(&g_old_termios, &tattr, sizeof(struct termios));
+	tattr.c_lflag &= ~(ECHO | /*ECHOCTL |*/ ICANON );
+//	tattr.c_oflag &= ~(OPOST);
+	tattr.c_cc[VMIN] = 1;
+	tattr.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSADRAIN, &tattr);
+	tgetent(NULL, getenv("TERM"));
+}
+
+void	restore_term_mode()
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_old_termios);//valgrind error : ioctl point to uninitialized byte. STDIN_FILENO ?
+}
+
 int		main(int argc, char **argv)
 {
-	extern char	**environ;
-/*	extern int	g_fd_prompt;
-*/	char		*input;
-	char		**args;
-	int		status;
-	
+	extern char		**environ;
+	char			*input;
+//	char			**args;
+	int				status;
+
 	(void)argc;
+	raw_term_mode(); //set termcaps the way you want
+	tcsetpgrp(STDIN_FILENO, getpid()); //Control the terminal
+	set_signals(FATHER);
 	copybuff = NULL;
+	input = NULL;
 	g_progname = argv[0];
+	init_shellvars(environ);
+	/* cmd_set(argc, argv); to show the list of internvars */
 	if (!(history(INIT, NULL, NULL)))
 		return (1);
 	if (!(environ = ft_tabcpy(environ)))
@@ -92,35 +116,17 @@ int		main(int argc, char **argv)
 		ft_tabdel(&environ);
 		return (1);
 	}
-	set_signals(0);
-	assign_variable("aaaa[9223372036854775808]=sadasd");
-	assign_variable("aaaa[9]=sadasd");
-/*	assign_variable("aaaa=sadasd");
-	assign_variable("=a");
-	assign_variable("=");
-	assign_variable("ad=");
-*/	while (!read_command(&input) || get_next_line(0, &input))
+	while (!read_command(&input) || get_next_line(0, &input))
 	{
-		if (!((status = history(ADD_CMD, &input, NULL))))
-		{	
+		if (!(status = history(ADD_CMD, &input, NULL)))
+		{
 			psherror(e_cannot_allocate_memory, argv[0], e_cmd_type);
 			return (1);
 		}
-		if (status != -1)
+		if (status != -1 && input[0])
 		{
-			args = lexer(&input);
-			ft_memdel((void**)&input);
-			if (!args)
-				continue;
-			status = synt(args);
-			if (status != e_success)
-			{
-				g_retval = status;
-				ft_tabdel(&args);
-				continue;
-			}
-			g_retval = jcont(args, environ);
-			ft_tabdel(&args);
+			lexer(&input);
+			debug_parser(input);
 		}
 		else
 			ft_memdel((void**)&input);
@@ -129,5 +135,7 @@ int		main(int argc, char **argv)
 	ft_tabdel(&environ);
 	ft_strdel(&copybuff);
 	ft_free_bintable();
+	restore_term_mode();
+	system("leaks 42sh");
 	return (0);
 }

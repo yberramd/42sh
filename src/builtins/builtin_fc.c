@@ -17,7 +17,17 @@
 #include "libft.h"
 #include "ft_getopt.h"
 
+#ifndef INT_MAX
 #define INT_MAX 2147483647
+#endif
+
+static int		ft_execute(int arg, char **option)
+{
+//	char *cmd;
+
+	(void)arg, (void)option;	
+	return (1);
+}
 
 static void		ft_strdel_option(char ***option)
 {
@@ -58,12 +68,6 @@ static int		ft_atoi_history(const char *str)
 		++i;
 	}
 	return (nbr * sign);
-}
-
-static int		ft_execute()
-{
-	ft_printf("fc -s\n");
-	return (1);
 }
 
 static int		ft_fc()
@@ -365,7 +369,7 @@ int		cmd_fc(int argc, char **argv)
 			opt_arg(&arg, opt);
 	}
 	if (arg & ARG_S)
-		ft_execute();
+		ft_execute(arg, option);
 	else if (arg & ARG_L)
 		ft_print_history(arg, option);
 	else

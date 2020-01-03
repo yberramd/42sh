@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/06 20:52:32 by abarthel          #+#    #+#             */
-/*   Updated: 2019/11/12 15:19:19 by yberramd         ###   ########.fr       */
+/*   Updated: 2019/12/16 15:10:32 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,17 @@ const t_builtins	g_builtins[] =
 	{ "history", &cmd_history},
 	{ "test", &cmd_test},
 	{ "fc", &cmd_fc},
-/*	{ "set", &cmd_set},
-*/	{ "\0", NULL}
+	{ "fg", &cmd_fg},
+	{ "bg", &cmd_bg},
+	{ "jobs", &cmd_jobs},
+	{ "set", &cmd_set},
+	{ "\0", NULL}
 };
 
 _Bool	prior_builtin(char *str)
 {
 	const struct s_prior_builtin	pbuiltin_list[] =
-	{ {"alias"}, {"unalias"}, {"echo"}, {"exit"}, {"hash"}, {"setenv"}, {"unsetenv"}, {"pwd"}, {"cd"}, {"type"}, {"test"}, {"set"}, {"fc"}, {"\0"} };
+	{ {"alias"}, {"unalias"}, {"echo"}, {"exit"}, {"hash"}, {"setenv"}, {"unsetenv"}, {"pwd"}, {"cd"}, {"type"}, {"test"}, {"set"}, {"fc"}, {"fg"}, {"bg"}, {"jobs"}, {"\0"} };
 	int								i;
 
 	i = 0;
