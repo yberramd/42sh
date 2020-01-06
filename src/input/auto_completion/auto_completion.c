@@ -79,7 +79,7 @@ static char *ft_last_back_slash(char *input)
 	return (point);
 }
 
-static char	**ft_path(char *input)// FAIRE ATTENTION AUX FREE
+static char	**ft_path(char *input, int *ret)// FAIRE ATTENTION AUX FREE
 {
 	int 			i;
 	char			**words;
@@ -88,8 +88,9 @@ static char	**ft_path(char *input)// FAIRE ATTENTION AUX FREE
 	char 			*point;
 
 	i = 0;
+	*ret = 2;
 	dir = NULL;
-	if (!(words = (char**)malloc(sizeof(char*) * 64)))
+	if (!(words = (char**)malloc(sizeof(char*) * 64)))//realloc a voir !!!!!!!!!!!!!!!!!
 		return (NULL);
 	if (input && input[0] == '/')
 	{
@@ -115,15 +116,35 @@ static char	**ft_path(char *input)// FAIRE ATTENTION AUX FREE
 			{
 				if (*point == '\0')
 				{
-					if (dirent->d_type == 4 && ft_strcmp("..", dirent->d_name) && ft_strcmp(".", dirent->d_name))
+					if (ft_strcmp("..", dirent->d_name) && ft_strcmp(".", dirent->d_name))
 					{
-						if (!(words[i] = ft_strjoin(dirent->d_name, "/")))
+						if (dirent->d_type == 4)
 						{
-							del_double_char(words);
-							return (NULL);
+							if (!(words[i] = ft_strjoin(dirent->d_name, "/")))
+							{
+								del_double_char(words);
+								return (NULL);
+							}
+						}
+						else
+						{
+							if (!(words[i] = ft_strdup(dirent->d_name)))
+							{
+								del_double_char(words);
+								return (NULL);
+							}
 						}
 						i++;
 					}
+				}
+				else if (dirent->d_type == 4)
+				{
+					if (!(words[i] = ft_strjoin(dirent->d_name, "/")))
+					{
+						del_double_char(words);
+						return (NULL);
+					}
+					i++;
 				}
 				else
 				{
@@ -281,12 +302,13 @@ static int	assign_words(t_tst *tst, char **words, char *input, int len)
 	return (1);
 }
 
-static char	**ft_binary(t_tst *tst, char *input)
+static char	**ft_binary(t_tst *tst, char *input, int *ret)
 {
 	int		len;
 	char	**words;
 
 	//printf("\nBINARY\n");
+	*ret = 1;
 	words = NULL;
 	if ((len = nbr_words(tst, input)) == 0)
 		return (NULL);
@@ -302,12 +324,14 @@ static char	**ft_binary(t_tst *tst, char *input)
 	return (words);
 }
 
-int 	ft_auto_completion(t_tst *tst, char *input, char ***words)
+int 	ft_auto_completion(t_tst *tst, char *input, char ***words, int start)
 {
-	if (((*words) = ft_binary(tst, input)) == NULL)
-		if (((*words) = ft_path(input)) == NULL)
+	int ret;
+
+	if (((*words) = ft_binary(tst, &input[start], &ret)) == NULL)
+		if (((*words) = ft_path(input, &ret)) == NULL)
 			return (0);
 	if ((*words) && (*words)[0] != NULL && (*words)[1] == NULL)
-		return (1);
-	return (2);
+		return (ret);
+	return (3);
 }

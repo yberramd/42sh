@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2019/12/16 22:15:39 by tgouedar         ###   ########.fr        #
+#    Updated: 2020/01/06 17:11:37 by yberramd         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -199,6 +199,11 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_string/ft_strtok.c \
 		f_strings/ft_bzero.c \
 		f_strings/ft_strcasecmp.c \
+		f_strings/ft_select/signal.c \
+		f_strings/ft_select/cursor.c \
+		f_strings/ft_select/display.c \
+		f_strings/ft_select/ft_select.c \
+		f_strings/ft_select/set_value.c \
 		f_unistd/ft_getopt_gnu.c \
 		f_unistd/ft_getopt_osx.c \
 		f_wchar/ft_fputwc.c \
