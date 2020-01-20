@@ -132,36 +132,47 @@ int backspace_key(char **buff, t_cursor *cursor)
 
 /***********************************************AUTOCOMPLETION*********************************************************/
 
-static int ft_last_back_slash(char *input, char **binary)
+static int ft_add_string(char *input, char **binary, int start)
 {
-	int 	i;
-	char 	*point;
 	char 	*tmp;
-	char 	svg;
+	int 	len;
+	int 	i;
+	int 	y;
 
 	i = 0;
-	point = NULL;
-	while (input[i] != '\0')
+	start = pos_start(input, start);
+	y = start;
+	len = ft_strlen(*binary);
+	while (input[y] != '\0' && input[y] == (*binary)[i])
 	{
-		if (input[i] == '/')
-		{
-			point = &input[i + 1];
-			svg = input[i + 1];
-		}
+		y++;
 		i++;
 	}
-	if (point)
+	len = len - i;
+	if (!(tmp = (char*)malloc(sizeof(char) * (len + ft_strlen(input)))))
+		return (0);
+	i = 0;
+	while (i < start)
 	{
-		*point = '\0';
-		if (!(tmp = ft_strjoin(input, *binary)))
-		{
-			*point = svg;
-			return (0);
-		}
-		ft_strdel(binary);
-		*binary = tmp;
-		*point = svg;
+		tmp[i] = input[i];
+		i++;
 	}
+	y = 0;
+	while ((*binary)[y] != '\0')
+	{
+		tmp[i] = (*binary)[y];
+		i++;
+		y++;
+	}
+	start = start + len;
+	while (input[start] != '\0')
+	{
+		tmp[i] = input[start];
+		start++;
+		i++;
+	}
+	ft_strdel(binary);
+	*binary = tmp;
 	return (1);
 }
 
@@ -176,27 +187,26 @@ int tab_key(char **buff, t_cursor *cursor)
 	tst = ft_tst();
 	if (!(ret = ft_auto_completion(tst, *buff, &binary, cursor->start)))// curseur !!!!!!
 		return (0);
-	else if (ret == 1)
+	if (ret == 2)
 	{
-		//printf("binary\n");
-		set_string(buff, cursor, binary[0]);
-	}
-	else if (ret == 2)
-	{
-		printf("path\n");
-		ft_last_back_slash(*buff, &binary[0]);// verif malloc fail
+		if (!(ft_add_string(*buff, &binary[0], cursor->start)))
+		{
+			del_tst(tst);
+			del_double_char(binary);
+			return (0);
+		}
 		printf("path = [%s]\n", binary[0]);
 		set_string(buff, cursor, binary[0]);
 	}
 	else
-		print_double_char(binary);
+		print_double_char(binary);//FAIRE UN display
 	//printf("ret = %d\n", ret);
 	del_tst(tst);
 	del_double_char(binary);
 	return (1);
 }
 
-/********************************************************************************************************/
+/**********************************************************************************************************************/
 
 int down_arrow(char **buff, t_cursor *cursor)
 {

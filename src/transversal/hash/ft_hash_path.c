@@ -6,7 +6,7 @@
 /*   By: tgouedar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/30 16:36:22 by tgouedar          #+#    #+#             */
-/*   Updated: 2019/10/23 19:04:54 by tgouedar         ###   ########.fr       */
+/*   Updated: 2020/01/13 22:01:40 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ static void				ft_push_exec(t_htable *bin_table, char *dir_name)
 
 	if (!(dir_data = opendir(dir_name))) //probleme d'ouverture -> gestion d'erreur
 		return ;
-	while ((file_data = readdir(dir_data))) 
+	while ((file_data = readdir(dir_data)))
 	{
-		if (ft_strcmp(file_data->d_name, ".") 
+		if (ft_strcmp(file_data->d_name, ".")
 		&& ft_strcmp(file_data->d_name, "..")
 		&& !ft_get_entry(bin_table, file_data->d_name))
 		{
@@ -77,7 +77,7 @@ void					ft_hash_path(t_htable *bin_table, char *path)
 		return ;
 	i = 0;
 	ft_empty_htable(bin_table);
-	/*ft_check_memory(*/dir = ft_strsplit(path, ':');
+	/*ft_check_memory(*/dir = ft_strsplit(path, ":");
 	while ((dir[i]))
 		ft_push_exec(bin_table, dir[i++]);
 	ft_tabdel(&dir);

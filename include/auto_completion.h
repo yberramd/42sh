@@ -32,5 +32,6 @@ void	print_double_char(char **tab);
 void	del_tst(t_tst *tst);
 int		search_tst(t_tst *tst, char *str);
 int 	ft_auto_completion(t_tst *tst, char *input, char ***words, int start);
+int 	pos_start(char *input, int start);
 
 #endif

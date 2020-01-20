@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/06 11:55:45 by abarthel          #+#    #+#             */
-/*   Updated: 2020/01/06 17:12:19 by yberramd         ###   ########.fr       */
+/*   Updated: 2020/01/15 18:40:03 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,9 @@ void				ft_bzero(void *s, size_t n) __attribute__((nonnull(1)));
 
 int					ft_strfchr(char *str1, char *str2);
 
-
 int					ft_isspace(char c);
 
-int					ft_isin(int c, char *charset);
+int					ft_isin(const char c, const char *charset);
 
 int					ft_isalpha(int c);
 
@@ -34,6 +33,8 @@ int					ft_isalnum(int c);
 int					ft_isascii(int c);
 
 int					ft_isprint(int c);
+
+int					ft_isupper(char c);
 
 int					ft_toupper(int c);
 
@@ -52,39 +53,39 @@ int					ft_strcasecmp(const char *s1, const char *s2) __attribute__
 int					ft_strncmp(const char *s1, const char *s2,
 					size_t n) __attribute__((nonnull(1,2)));
 
-int					ft_memcmp(const void *s1, const void *s2, size_t n)
-											__attribute__((nonnull(1,2)));
+int					ft_memcmp(const void *s1, const void *s2,
+								size_t n) __attribute__((nonnull(1,2)));
 
 size_t				ft_strlen(const char *s) __attribute__((nonnull(1)));
 
 int					ft_numlen(unsigned int nb);
 
-size_t				ft_strlcat(char *dst, const char *src, size_t size)
-												__attribute__((nonnull(1,2)));
+size_t				ft_strlcat(char *dst, const char *src,
+						size_t size) __attribute__((nonnull(1,2)));
 
-void				*ft_memset(void	*b, int c, size_t len)
-												__attribute__((nonnull(1)));
+void				*ft_memset(void *b, int c,
+								size_t len) __attribute__((nonnull(1)));
 
-void				*ft_memcpy(void *dst, const void *src, size_t n)
-										__attribute__((nonnull(1,2)));
+void				*ft_memcpy(void *dst, const void *src,
+							size_t n) __attribute__((nonnull(1,2)));
 
-void				*ft_memccpy(void *dst, const void *src, int c, size_t n)
-												__attribute__((nonnull(1,2)));
+void				*ft_memccpy(void *dst, const void *src, int c,
+								size_t n) __attribute__((nonnull(1,2)));
 
-void				*ft_memmove(void *dst, const void *src, size_t len)
-												__attribute__((nonnull(1,2)));
+void				*ft_memmove(void *dst, const void *src,
+							size_t len) __attribute__((nonnull(1,2)));
 
-void				*ft_memchr(const void *s, int c, size_t n)
-												__attribute__((nonnull(1)));
+void				*ft_memchr(const void *s, int c,
+									size_t n) __attribute__((nonnull(1)));
 
-char				*ft_strstr(const char *haystack, const char *needle)
-												__attribute__((nonnull(1,2)));
+char				*ft_strstr(const char *haystack,
+						const char *needle) __attribute__((nonnull(1,2)));
 
 char				*ft_strcat(char *s1, const char *s2) __attribute__
 					((nonnull(1,2)));
 
-char				*ft_strncat(char *s1, const char *s2, size_t n)
-												__attribute__((nonnull(1,2)));
+char				*ft_strncat(char *s1, const char *s2,
+									size_t n) __attribute__((nonnull(1,2)));
 
 char				*ft_strcpy(char *dst, const char *src) __attribute__
 					((nonnull(1,2)));
@@ -95,8 +96,7 @@ char				*ft_strendcpy(char *dst, const char *src) __attribute__
 char				*ft_strncpy(char *dst, const char *src,
 					size_t len) __attribute__((nonnull(1,2)));
 
-char				*ft_strdup(const char *s1) __attribute__
-					((nonnull(1)));
+char				*ft_strdup(const char *s1) __attribute__((nonnull(1)));
 
 char				*ft_strndup(const char *s1, size_t len) __attribute__
 					((nonnull(1)));
@@ -184,8 +184,10 @@ char				*ft_strtrim(char const *s);
 
 char				*ft_itoa(int n);
 
-char				**ft_strsplit(char const *s, char c) __attribute__
-					((nonnull(1)));
+size_t				ft_indice(char c, const char *charset);
+
+char				**ft_strsplit(char const *s,
+						const char *charset) __attribute__((nonnull(1,2)));
 
 char				**ft_strsplit_whitespaces(char *str) __attribute__
 					((nonnull(1)));
@@ -201,13 +203,13 @@ typedef int			(*t_ft_cmp)(t_list *, t_list *);
 
 void				ft_lst_mergesort(t_list **lst, t_ft_cmp ft_cmp);
 
-void				ft_lstadd_back(t_list **alst, t_list *new);
+void				ft_lstadd_back(t_list **alst, t_list *new_nod);
 
 void				ft_lstdelone(t_list **alst, void (*del)(void *, size_t));
 
 void				ft_lstdel(t_list **alst, void (*del)(void *, size_t));
 
-void				ft_lstadd(t_list **alst, t_list *new);
+void				ft_lstadd(t_list **alst, t_list *new_nod);
 
 void				ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 
@@ -227,14 +229,20 @@ int					ft_str_is_lowercase(char *s) __attribute__((nonnull(1)));
 
 int					ft_str_is_uppercase(char *s) __attribute__((nonnull(1)));
 
+void				ft_strlower(char *str);
+
 int					ft_isprime(size_t n);
 
 int					ft_isnumber(char *str);
 
+int					ft_isnumber_base(char *to_test, const char *base);
+
+int					ft_pow(int n, unsigned int i);
+
 int					ft_isempty(char *s);
 
-int					ft_chrsearch(const char *s, int c)
-												__attribute__((nonnull(1)));
+int					ft_chrsearch(const char *s,
+										int c) __attribute__((nonnull(1)));
 
 int					get_next_line(const int fd, char **line);
 
@@ -244,17 +252,16 @@ int					ft_fprintbits(int fd, char c);
 
 int					ft_printbits(char c);
 
-size_t				ft_strclen(const char *s, char c)
-												__attribute__((nonnull(1)));
+size_t				ft_strclen(const char *s,
+									char c) __attribute__((nonnull(1)));
 
-int					ft_printf(const char *__restrict__ format, ...)
-										__attribute__((format(printf,1,2)));
+int					ft_printf(const char *restrict format, ...);
 
-int					ft_dprintf(int fd, const char *__restrict__ format, ...);
+int					ft_dprintf(int fd, const char *restrict format, ...);
 
 int					ft_asprintf(char **ret, const char *format, ...);
 
-int					ft_vdprintf(int fd, const char *__restrict__ format,
+int					ft_vdprintf(int fd, const char *restrict format,
 																va_list ap);
 
 int					ft_vasprintf(char **ret, const char *format, va_list ap);

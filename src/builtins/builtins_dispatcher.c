@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/06 20:52:32 by abarthel          #+#    #+#             */
-/*   Updated: 2019/12/16 15:10:32 by tgouedar         ###   ########.fr       */
+/*   Updated: 2020/01/18 12:44:03 by tgouedar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,6 @@ const t_builtins	g_builtins[] =
 	{ "echo", &cmd_echo},
 	{ "hash", &cmd_hash},
 	{ "exit", &cmd_exit},
-	{ "env", &cmd_env},
-	{ "setenv", &cmd_setenv},
-	{ "unsetenv", &cmd_unsetenv},
 	{ "pwd", &cmd_pwd},
 	{ "cd", &cmd_cd},
 	{ "true", &cmd_true},
@@ -41,10 +38,11 @@ const t_builtins	g_builtins[] =
 	{ "\0", NULL}
 };
 
-_Bool	prior_builtin(char *str)
+_Bool				prior_builtin(char *str)
 {
 	const struct s_prior_builtin	pbuiltin_list[] =
-	{ {"alias"}, {"unalias"}, {"echo"}, {"exit"}, {"hash"}, {"setenv"}, {"unsetenv"}, {"pwd"}, {"cd"}, {"type"}, {"test"}, {"set"}, {"fc"}, {"fg"}, {"bg"}, {"jobs"}, {"\0"} };
+	{ {"alias"}, {"unalias"}, {"echo"}, {"exit"}, {"hash"}, {"pwd"}, {"cd"},
+		{"type"}, {"test"}, {"set"}, {"fc"}, {"fg"}, {"bg"}, {"jobs"}, {"\0"} };
 	int								i;
 
 	i = 0;
@@ -57,7 +55,7 @@ _Bool	prior_builtin(char *str)
 	return (0);
 }
 
-static void	*dispatcher(char *cmd)
+static void			*dispatcher(char *cmd)
 {
 	int	i;
 
@@ -70,7 +68,7 @@ static void	*dispatcher(char *cmd)
 		return ((void*)g_builtins[i].f);
 }
 
-int		is_a_builtin(char *cmd)
+int					is_a_builtin(char *cmd)
 {
 	if (dispatcher(cmd))
 		return (1);
@@ -78,7 +76,7 @@ int		is_a_builtin(char *cmd)
 		return (0);
 }
 
-int			builtins_dispatcher(char **argv)
+int					builtins_dispatcher(char **argv)
 {
 	int			(*f)(int, char**);
 	int			ret;

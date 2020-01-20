@@ -24,7 +24,6 @@ void	print_double_char(char **tab)
 	int	i;
 
 	i = 0;
-	ft_putchar('\n');
 	while (tab && tab[i] != NULL)
 	{
 		ft_putendl(tab[i]);
@@ -79,7 +78,7 @@ static char *ft_last_back_slash(char *input)
 	return (point);
 }
 
-static char	**ft_path(char *input, int *ret)// FAIRE ATTENTION AUX FREE
+static char	**ft_path(char *input)// FAIRE ATTENTION AUX FREE
 {
 	int 			i;
 	char			**words;
@@ -88,7 +87,6 @@ static char	**ft_path(char *input, int *ret)// FAIRE ATTENTION AUX FREE
 	char 			*point;
 
 	i = 0;
-	*ret = 2;
 	dir = NULL;
 	if (!(words = (char**)malloc(sizeof(char*) * 64)))//realloc a voir !!!!!!!!!!!!!!!!!
 		return (NULL);
@@ -302,13 +300,12 @@ static int	assign_words(t_tst *tst, char **words, char *input, int len)
 	return (1);
 }
 
-static char	**ft_binary(t_tst *tst, char *input, int *ret)
+static char	**ft_binary(t_tst *tst, char *input)
 {
 	int		len;
 	char	**words;
 
 	//printf("\nBINARY\n");
-	*ret = 1;
 	words = NULL;
 	if ((len = nbr_words(tst, input)) == 0)
 		return (NULL);
@@ -324,14 +321,25 @@ static char	**ft_binary(t_tst *tst, char *input, int *ret)
 	return (words);
 }
 
+int pos_start(char *input, int start)
+{
+	if (!ft_isspace(input[start]))
+	{
+		while (start > 0 && !ft_isspace(input[start]))
+			start--;
+		if (ft_isspace(input[start]))
+			start++;
+	}
+	return (start);
+}
+
 int 	ft_auto_completion(t_tst *tst, char *input, char ***words, int start)
 {
-	int ret;
-
-	if (((*words) = ft_binary(tst, &input[start], &ret)) == NULL)
-		if (((*words) = ft_path(input, &ret)) == NULL)
+	start = pos_start(input, start);
+	if (((*words) = ft_binary(tst, &input[start])) == NULL)
+		if (((*words) = ft_path(&input[start])) == NULL)
 			return (0);
 	if ((*words) && (*words)[0] != NULL && (*words)[1] == NULL)
-		return (ret);
+		return (2);
 	return (3);
 }

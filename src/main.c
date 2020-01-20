@@ -6,7 +6,7 @@
 /*   By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 18:32:13 by abarthel          #+#    #+#             */
-/*   Updated: 2020/01/03 11:31:05 by tgouedar         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:48:09 by yberramd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include "builtins.h"
 #include "prompt.h"
 #include "input.h"
+#include "termcaps.h"
 #include "error.h"
 #include "lexer.h"
 #include "parser.h"
@@ -67,34 +68,14 @@ static int	set_minimal_env(void)
 	return (e_success);
 }
 
-void	raw_term_mode()
-{
-	struct termios	tattr;
-
-	tcgetattr(STDIN_FILENO, &tattr);
-	ft_memcpy(&g_old_termios, &tattr, sizeof(struct termios));
-	tattr.c_lflag &= ~(ECHO | /*ECHOCTL |*/ ICANON );
-//	tattr.c_oflag &= ~(OPOST);
-	tattr.c_cc[VMIN] = 1;
-	tattr.c_cc[VTIME] = 0;
-	tcsetattr(STDIN_FILENO, TCSADRAIN, &tattr);
-	tgetent(NULL, getenv("TERM"));
-}
-
-void	restore_term_mode()
-{
-	tcsetattr(STDIN_FILENO, TCSANOW, &g_old_termios);//valgrind error : ioctl point to uninitialized byte. STDIN_FILENO ?
-}
-
 int		main(int argc, char **argv)
 {
 	extern char		**environ;
 	char			*input;
-//	char			**args;
 	int				status;
 
-	(void)argc;
-	raw_term_mode(); //set termcaps the way you want
+	(void) argc;
+	set_termcaps(TC_SAVE);
 	tcsetpgrp(STDIN_FILENO, getpid()); //Control the terminal
 	set_signals(FATHER);
 	copybuff = NULL;
@@ -125,17 +106,11 @@ int		main(int argc, char **argv)
 		}
 		if (status != -1 && input[0])
 		{
-			lexer(&input);
-			debug_parser(input);
+			lexer_verbose(&input);
+			execute(input);
 		}
-		else
-			ft_memdel((void**)&input);
+		ft_strdel(&input);
 	}
-	history(DELETE, NULL, NULL);
-	ft_tabdel(&environ);
-	ft_strdel(&copybuff);
-	ft_free_bintable();
-	restore_term_mode();
-	system("leaks 42sh");
-	return (0);
+	cmd_exit(0, NULL);
+	return(0);
 }

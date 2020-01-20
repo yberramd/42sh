@@ -6,7 +6,7 @@
 /*   By: bprunevi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/19 09:38:27 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/12/15 15:19:51 by bprunevi         ###   ########.fr       */
+/*   Updated: 2020/01/15 12:02:48 by bprunevi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ char	*word(t_token tok)
 {
 	if (tok.type == WORD || tok.type == ASSIGNMENT_WORD)
 	{
-		ft_dprintf(2, "tok.type of type WORD detected with value '%s' !\n", tok.symbol);
+//		ft_dprintf(2, "tok.type of type WORD detected with value '%s' !\n", tok.symbol);
+//		ft_printf("HEREEEE = %s\n", tok.symbol);
 		expansions_treatment(&tok.symbol);
 		return(tok.symbol);
 	}

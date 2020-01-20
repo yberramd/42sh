@@ -6,7 +6,7 @@
 /*   By: bprunevi <bprunevi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 12:13:59 by bprunevi          #+#    #+#             */
-/*   Updated: 2019/12/19 11:19:05 by bprunevi         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:44:31 by bprunevi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,15 @@ int				i_comp_list(t_elem left, t_elem right)
 	left.v->f(left.v->left, left.v->right);
 	ft_launch_job("plop", FOREGROUND);
 	right.v->f(right.v->left, right.v->right);
+	return (0);
+}
+
+int				i_and_list(t_elem left, t_elem right)
+{
+	left.v->f(left.v->left, left.v->right);
+	ft_launch_job("plop", BACKGROUND);
+	if (right.v)
+		right.v->f(right.v->left, right.v->right);
 	return (0);
 }
 
@@ -58,7 +67,7 @@ int				i_execnode(t_elem left, t_elem right)
 	if (left.v)
 		left.v->f(left.v->left, left.v->right);
 	right.v->f(right.v->left, right.v->right);
-	return(0);
+	return (0);
 }
 
 int				i_simple_command(t_elem left, t_elem right)
@@ -86,5 +95,5 @@ int				i_simple_command(t_elem left, t_elem right)
 	}
 	else
 		ft_add_process(left, right, g_fd, g_fclose);
-	return(0);
+	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: abarthel <abarthel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/25 14:45:47 by abarthel          #+#    #+#              #
-#    Updated: 2020/01/06 17:11:37 by yberramd         ###   ########.fr        #
+#    Updated: 2020/01/19 13:17:26 by tgouedar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		ds_queue/queue_size.c \
 		ds_queue/queue_apply_to_each.c \
 		ds_singly_linked_list/ft_lstadd.c \
+		ds_singly_linked_list/ft_lstadd_back.c \
 		ds_singly_linked_list/ft_lstdel.c \
 		ds_singly_linked_list/ft_lstdelone.c \
 		ds_singly_linked_list/ft_lstiter.c \
@@ -61,7 +62,9 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_ctype/ft_isdigit.c \
 		f_ctype/ft_tolower.c \
 		f_ctype/ft_toupper.c \
+		f_ctype/ft_isupper.c \
 		f_errno/error_msg.c \
+		f_misc/ft_pow.c \
 		f_misc/ft_strfchr.c \
 		f_misc/ft_strnjoinfree.c \
 		f_misc/ft_isspace.c \
@@ -73,6 +76,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_misc/ft_fprintbits.c \
 		f_misc/ft_fputwcbits.c \
 		f_misc/ft_fputwsbits.c \
+		f_misc/ft_indice.c \
 		f_misc/ft_isempty.c \
 		f_misc/ft_isprime.c \
 		f_misc/ft_isprint.c \
@@ -104,6 +108,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_misc/ft_resolvepath.c \
 		f_misc/ft_sortopt.c \
 		f_misc/ft_str_is_alpha.c \
+		f_misc/ft_strlower.c \
 		f_misc/ft_str_is_lowercase.c \
 		f_misc/ft_str_is_numeric.c \
 		f_misc/ft_str_is_printable.c \
@@ -181,6 +186,7 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_string/ft_memmove.c \
 		f_string/ft_memset.c \
 		f_string/ft_isnumber.c \
+		f_string/ft_isnumber_base.c \
 		f_string/ft_strcat.c \
 		f_string/ft_strchr.c \
 		f_string/ft_strcmp.c \
@@ -199,11 +205,6 @@ SOURCES	:=	ds_btree/btree_apply_infix.c \
 		f_string/ft_strtok.c \
 		f_strings/ft_bzero.c \
 		f_strings/ft_strcasecmp.c \
-		f_strings/ft_select/signal.c \
-		f_strings/ft_select/cursor.c \
-		f_strings/ft_select/display.c \
-		f_strings/ft_select/ft_select.c \
-		f_strings/ft_select/set_value.c \
 		f_unistd/ft_getopt_gnu.c \
 		f_unistd/ft_getopt_osx.c \
 		f_wchar/ft_fputwc.c \
@@ -220,4 +221,4 @@ DEPENDS := $(patsubst %.c,%.d,$(addprefix $(SOURCES_PATH), $(SOURCES)))
 
 ARFLAGS := rc
 
-CFLAGS += -Wall -Werror -Wextra -ansi -std=c99 -D_POSIX_C_SOURCE -fno-builtin -O2
+CFLAGS += -Wall -Werror -Wextra -ansi -std=c99 #-D_POSIX_C_SOURCE -fno-builtin -O2
